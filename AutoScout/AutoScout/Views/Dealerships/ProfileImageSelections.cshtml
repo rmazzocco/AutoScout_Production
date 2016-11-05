@@ -1,0 +1,39 @@
+﻿<!-- Displays current Image Selections for Profile Header and Icon which which will show on the Dealership's public page -->
+
+@model AutoScout.Models.Dealership
+
+@{ 
+    var headerImage = Model.ProfileBackgroundImage;
+    var iconImage = Model.Icon;
+    var base64Header = Convert.ToBase64String(headerImage);
+    var base64Icon = Convert.ToBase64String(iconImage);
+    var headerImageSrc = string.Format("data:image/png;base64,{0}", base64Header);
+    var iconImageSrc = string.Format("data:image/png;base64,{0}", base64Icon);
+}
+
+<div class="col-md-offset-1 container-fluid">
+    <h3>Current Image Selections</h3>
+
+    <br />
+
+    <div class="col-md-6">
+        <div class="thumbnail">
+            <div>
+                <img src="@headerImageSrc" class="img-responsive img-thumbnail center-block" />
+            </div>
+            <div class="caption">
+                <h4 class="text-center">Active Header</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="thumbnail">
+            <div>
+                <img src="@iconImageSrc" class="img-responsive img-thumbnail center-block" />
+            </div>
+            <div class="caption">
+                <h4 class="text-center">Active Icon</h4>
+            </div>
+        </div>
+    </div>
+</div>

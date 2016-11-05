@@ -1,0 +1,72 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.price {
+    color: #B71C1C !important;
+}
+
+.vehicle-result-img{
+  width: auto;
+  max-width: 200px;
+  height: auto;
+  max-height: 150px;
+}
+
+.padding{
+    height: 20px;
+}
+
+.right{
+    float: right;
+}
+
+.pad-right-10{
+    padding-right: 10px;
+}
+
+.select-small-text {
+    font-size: 12px !important;
+}
+
+.site-title-red {
+    color: #B71C1C !important;
+}
+
+.main-background{
+    background: #EEEEEE !important;
+}
+
+.white-content-container {
+    background: white !important;
+    box-shadow: 2px 2px 5px black;
+}
+
+.margin-top-50 {
+    margin-top: 50px;
+}
+
+.height-120 {
+    height: 200px;
+}
