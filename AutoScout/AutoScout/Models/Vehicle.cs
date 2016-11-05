@@ -12,6 +12,8 @@ namespace AutoScout.Models
     {
         public int Id { get; set; }
 
+        public DateTime DateCreated { get; set; }
+
         [Display(Name = "VIN Number")]
         public string VIN { get; set; }
 
@@ -35,9 +37,6 @@ namespace AutoScout.Models
 
         [Display(Name = "Number of Cylinders")]
         public int CylinderNumber { get; set; }
-
-        [Display(Name = "Transmission Type")]
-        public string TransmissionType { get; set; }
 
         public ICollection<VehicleImage> Images { get; set; }
         public VehicleImage DefaultImage { get; set; }
@@ -63,8 +62,10 @@ namespace AutoScout.Models
                 }
             }*/
             var service = new DealershipAccountService(context);
-            var currentUserId = service.GetCurrentUserDealershipIdFromIdentity();
-            this.DealershipId = currentUserId;
+
+            var dealershipId = service.GetCurrentUserDealershipIdFromIdentity();
+            DealershipId = dealershipId;
+            DateCreated = DateTime.Now.ToUniversalTime();
         }
 
     }

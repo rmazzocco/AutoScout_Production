@@ -196,6 +196,14 @@
     <Compile Include="Migrations\201610242252589_VehicleDealershipDetails.Designer.cs">
       <DependentUpon>201610242252589_VehicleDealershipDetails.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201611051921366_AddedDateCreated.cs" />
+    <Compile Include="Migrations\201611051921366_AddedDateCreated.Designer.cs">
+      <DependentUpon>201611051921366_AddedDateCreated.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611051945493_RemoveTransmissionType.cs" />
+    <Compile Include="Migrations\201611051945493_RemoveTransmissionType.Designer.cs">
+      <DependentUpon>201611051945493_RemoveTransmissionType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Dealership.cs" />
@@ -323,6 +331,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610242252589_VehicleDealershipDetails.resx">
       <DependentUpon>201610242252589_VehicleDealershipDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611051921366_AddedDateCreated.resx">
+      <DependentUpon>201611051921366_AddedDateCreated.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611051945493_RemoveTransmissionType.resx">
+      <DependentUpon>201611051945493_RemoveTransmissionType.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

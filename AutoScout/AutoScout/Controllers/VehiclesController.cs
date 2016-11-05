@@ -91,11 +91,12 @@ namespace AutoScout.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,VIN,Mileage,ExteriorColor,InteriorColor,Make,Model,Year,Price,Transmission,Style,Condition,CylinderNumber,TransmissionType")] Vehicle vehicle)
         {
-
+            /*
             var dealershipService = new DealershipAccountService(db);
             var dealershipId = dealershipService.GetCurrentUserDealershipIdFromIdentity();
             vehicle.DealershipId = dealershipId;
-
+            vehicle.DateCreated = DateTime.Now.ToUniversalTime();
+            */
 
             if (ModelState.IsValid)
             {
