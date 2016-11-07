@@ -17,7 +17,7 @@ namespace AutoScout.Models
         [Display(Name = "VIN Number")]
         public string VIN { get; set; }
 
-        public string Mileage { get; set; }
+        public int Mileage { get; set; }
 
         [Display(Name = "Exterior Color")]
         public string ExteriorColor { get; set; }

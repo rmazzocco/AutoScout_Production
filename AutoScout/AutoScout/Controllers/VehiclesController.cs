@@ -206,6 +206,23 @@ namespace AutoScout.Controllers
             return View(image);
         }
 
+        //GET - retrieve vehicles that meet custom search criteria
+        public void SearchInventory()
+        {
+            var service = new VehicleSearchService(db);
+            service.SearchInventory(null, null, 2005, -1, -1, -1, -1, null, null, null, -1, null);
+            service.SearchInventory(null, null, -1, -1, -1, -1, -1, null, null, null, -1, "Silver");
+            
+        }
+
+        [HttpGet]
+        public JsonResult GetSearchCriteriaResults(VehicleSearchCriteriaViewModel model)
+        {
+            var pleaseWork = model;
+            var make = model.Make;
+            var message = "hopefully it worked";
+            return Json(message, JsonRequestBehavior.AllowGet);
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

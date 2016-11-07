@@ -204,6 +204,10 @@
     <Compile Include="Migrations\201611051945493_RemoveTransmissionType.Designer.cs">
       <DependentUpon>201611051945493_RemoveTransmissionType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201611052131522_MileageToInt.cs" />
+    <Compile Include="Migrations\201611052131522_MileageToInt.Designer.cs">
+      <DependentUpon>201611052131522_MileageToInt.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Dealership.cs" />
@@ -212,9 +216,11 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Models\VehicleImage.cs" />
+    <Compile Include="Models\VehicleSearchCriteriaViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DealershipAccountService.cs" />
     <Compile Include="Services\ImageManagementService.cs" />
+    <Compile Include="Services\VehicleSearchService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -337,6 +343,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201611051945493_RemoveTransmissionType.resx">
       <DependentUpon>201611051945493_RemoveTransmissionType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611052131522_MileageToInt.resx">
+      <DependentUpon>201611052131522_MileageToInt.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

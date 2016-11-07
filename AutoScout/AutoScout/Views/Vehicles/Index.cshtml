@@ -56,6 +56,11 @@
                         <select class="form-control select-small-text" id="selectStyle" data-bind="visible: useStyleField, options: StyleChoices, optionsText: 'description', value: Style"></select>
                     </div>
                     <div class="form-group">
+                        <input class="pad-right-10" type="checkbox" name="transmissionCheckBox" data-bind="checked: useTransmissionField" />
+                        <label for="selectTransmission">Transmission</label>
+                        <select class="form-control select-small-text" id="selectTransmission" data-bind="visible: useTransmissionField, options: TransmissionChoices, optionsText: 'description', value: Transmission"></select>
+                    </div>
+                    <div class="form-group">
                         <input class="pad-right-10" type="checkbox" name="mileageCheckBox" data-bind="checked: useMileageField" />
                         <label for="selectMileage">Mileage</label>
                         <select class="form-control select-small-text" id="selectMileage" data-bind="visible: useMileageField, options: MileageChoices, optionsText: 'description', value: Mileage"></select>
@@ -89,6 +94,10 @@
                     </div>
                 </form>
             </div>
+            <div id="testSearchService">
+                <p data-bind="text: Make"></p>
+                <button data-bind="click: SendSearch">Search that Ish</button>
+            </div>
         </div>
     </div>
     <!-- List of Search Results items -->
@@ -112,15 +121,33 @@
 </div>
 
 <script>
+
+    function FilterSearchCriteriaViewModel(make, model, year, minPrice, maxPrice, minMileage, maxMileage, transmission, style, condition, cylinderNumber, exteriorColor) {
+        return {
+            Make: make,
+            Model: model,
+            Year: year,
+            MinPrice: minPrice,
+            MaxPrice: maxPrice,
+            MinMileage: minMileage,
+            MaxMileage: maxMileage,
+            Transmission: transmission,
+            Style: style,
+            Condition: condition,
+            CylinderNumber: cylinderNumber,
+            ExteriorColor: exteriorColor,
+        }
+    }
+
     function FilterSearchViewModel(){
         var self = this;
 
         self.MileageChoices = ko.observableArray([{ description: "< 50,000" }, { description: "50,000 - 100,000" }, { description: "100,000 - 150,000" }, { description: "150,000 - 200,000" }, { description: "> 200,000" }]);
         self.StyleChoices = ko.observableArray([{ description: "Coupe" }, { description: "Sedan" }, { description: "Van" }, { description: "Mini Van" }, { description: "SUV" }, { description: "Truck" }]);
-        self.ConditionChoices = ko.observableArray([{ description: "Used" }, { description: "New" }])
-        self.CylinderChoices = ko.observableArray([{ description: 2 }, { description: 4 }, { description: 6 }, { description: 8 }])
-
-
+        self.ConditionChoices = ko.observableArray([{ description: "Used" }, { description: "New" }]);
+        self.CylinderChoices = ko.observableArray([{ description: 2 }, { description: 4 }, { description: 6 }, { description: 8 }]);
+        self.TransmissionChoices = ko.observableArray([{ description: "Automatic" }, { description: "Manual" }]);
+       
         self.useMakeField = ko.observable(false);
         self.useModelField = ko.observable(false);
         self.useCylinderField = ko.observable(false);
@@ -131,8 +158,9 @@
         self.useYearField = ko.observable(false);
         self.useMileageField = ko.observable(false);
         self.usePriceField = ko.observable(false);
+        self.useTransmissionField = ko.observable(false);
 
-        self.Make = ko.observable("");
+        self.Make = ko.observable("Jeep");
         self.Model = ko.observable("");
         self.CylinderCount = ko.observable("");
         self.Style = ko.observable("");
@@ -143,8 +171,50 @@
         self.Mileage = ko.observable("");
         self.MinimumPrice = ko.observable("");
         self.MaximumPrice = ko.observable("");
+        self.Transmission = ko.observable("");
 
-        
+        self.MinimumMileage = ko.observable("");
+        self.MaximumMileage = ko.observable("");
+
+        (function() {
+            if(self.Mileage === "< 50,000"){
+                self.MinimumMileage(0);
+                self.MaximumMileage(49999);
+            }
+            else if(self.Mileage === "50,000 - 100,000"){
+                self.MinimumMileage(50000);
+                self.MaximumMileage(100000);
+            }
+            else if(self.Mileage === "100,000 - 150,000"){
+                self.MinimumMileage(100000);
+                self.MaximumMileage(150000);
+            }
+            else if(self.Mileage === "150,000 - 200,000"){
+                self.MinimumMileage(150000);
+                self.MaximumMileage(200000);
+            }
+            else if(self.Mileage === "> 200,000"){
+                self.MinimumMileage(200000);
+                self.MaximumMileage(999999);
+            } else {
+                self.MinimumMileage("");
+                self.MaximumMileage("");
+            }
+            
+        });
+
+        self.SearchData = new FilterSearchCriteriaViewModel(self.Make, self.Model, self.Year, self.MinimumPrice, self.MaximumPrice, self.MinimumMileage, self.MaximumMileage, self.Transmission, self.Style, self.Condition, self.CylinderCount, self.ExteriorColor);
+
+        self.SendSearch = function() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetSearchCriteriaResults")",
+                data: ko.toJSON(self.SearchData),
+                success: function(message) {
+                    alert(message);
+                }
+            });
+        }
         
     }
     ko.applyBindings(FilterSearchViewModel);
