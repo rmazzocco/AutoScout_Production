@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using AutoScout.Models;
 using AutoScout.Services;
+using Newtonsoft.Json;
 
 namespace AutoScout.Controllers
 {
@@ -23,29 +24,24 @@ namespace AutoScout.Controllers
                 var service = new DealershipAccountService(db);
                 int currentUserId = service.GetCurrentUserDealershipIdFromIdentity();
                 var dealership = db.Dealerships.FirstOrDefault(x => x.Id == currentUserId);
-                /*if (currentUserId != 0 && currentUserId != 1)
-                {
-                    var vehicles = db.Vehicles.Where(x => x.DealershipId == currentUserId);
-                    ViewBag.CompanyName = dealership.CompanyName;
-                    return View(vehicles.ToList());
-                }
-                else
-                {
-                    var vehicles = db.Vehicles.Where(x => x.Make != null).ToList();
-                    return View(vehicles);
-                }*/
+                
                 var allMakes = db.Vehicles.Select(x => x.Make).ToList().Distinct();
                 var allModels = db.Vehicles.Select(x => x.Model).ToList().Distinct();
                 var allExteriorColors = db.Vehicles.Select(x => x.ExteriorColor).ToList().Distinct();
+                var allYears = db.Vehicles.Select(x => x.Year).ToList().Distinct();
+
                 ViewBag.AllModels = allModels;
                 ViewBag.AllMakes = allMakes;
                 ViewBag.AllExteriorColors = allExteriorColors;
-                
+                ViewBag.AllYears = allYears;
+
                 var vehicles = db.Vehicles.Where(x => x.Make != null).ToList();
                 if(vehicles.Count < 1 || vehicles == null)
                 {
                     ViewBag.ErrorMessage = "Sorry, your search returned no results. Please change your search criteria and try again.";
                 }
+                ViewBag.AllVehicles = vehicles.ToList();
+
                 return View(vehicles);
             }
         }
@@ -106,7 +102,7 @@ namespace AutoScout.Controllers
             }
 
             ViewBag.DealershipId = new SelectList(db.Dealerships, "Id", "CompanyName", vehicle.DealershipId);
-            return PartialView(vehicle);
+            return View(vehicle);
         }
 
         // GET: Vehicles/Edit/5
@@ -215,14 +211,64 @@ namespace AutoScout.Controllers
             
         }
 
-        [HttpGet]
-        public JsonResult GetSearchCriteriaResults(VehicleSearchCriteriaViewModel model)
+        //Get - retrieve vehicle search results
+        public JsonResult GetSearchResults(string make, string model, string transmission, string style, string condition, int year, int minPrice, int maxPrice, int minMileage, int maxMileage, int cylinderNumber, string exteriorColor)
         {
-            var pleaseWork = model;
-            var make = model.Make;
-            var message = "hopefully it worked";
-            return Json(message, JsonRequestBehavior.AllowGet);
+            using (var db = new AutoScoutDBContext())
+            {
+                //create instance of Vehicle Search Service
+                var vehicleSearchService = new VehicleSearchService(db);
+
+                //send search result criteria from parameters to SearchInventory method which will return matching vehicles
+                var searchResults = vehicleSearchService.SearchInventory(make, model, year, minPrice, maxPrice, minMileage, maxMileage, transmission, style, condition, cylinderNumber, exteriorColor);
+                var vehicleViewModels = new List<VehicleSearchCriteriaViewModel>();
+                
+                foreach(var item in searchResults)
+                {
+                    vehicleViewModels.Add(new VehicleSearchCriteriaViewModel(item.Id, item.Make, item.Model, item.Year, item.Price, item.Mileage, item.Transmission, item.Style, item.Condition, item.CylinderNumber, item.ExteriorColor));
+                }
+                return Json(vehicleViewModels, JsonRequestBehavior.AllowGet);
+            }
         }
+
+        [HttpGet]
+        public string GetVehicleDealershipName(int dealershipId)
+        {
+            var vehicleSearchService = new VehicleSearchService(db);
+            var dealershipOfVehicle = vehicleSearchService.GetDealershipData(dealershipId);
+            var name = dealershipOfVehicle.CompanyName;
+            return name;
+        }
+
+      
+        [HttpGet]
+        public JsonResult GetModelsFromMake(string make)
+        {
+            var service = new VehicleSearchService(db);
+            var models = service.GetAllModelsFromMake(make);
+
+            return Json(models, JsonRequestBehavior.AllowGet);
+
+        }
+
+       
+        //Obtain initial list of vehicles when loading filter search page
+        [HttpGet]
+        public JsonResult GetInitialVehicleListData()
+        {
+            var service = new VehicleSearchService(db);
+            var vehicles = service.GetNewestVehicles();
+            var vehicleViewModels = new List<VehicleSearchCriteriaViewModel>();
+
+            foreach (var item in vehicles)
+            {
+                vehicleViewModels.Add(new VehicleSearchCriteriaViewModel(item.Id, item.Make, item.Model, item.Year, item.Price, item.Mileage, item.Transmission, item.Style, item.Condition, item.CylinderNumber, item.ExteriorColor));
+            }
+            return Json(vehicleViewModels, JsonRequestBehavior.AllowGet);
+        }
+
+        
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

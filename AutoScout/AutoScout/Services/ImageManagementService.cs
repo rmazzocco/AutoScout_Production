@@ -41,6 +41,7 @@ namespace AutoScout.Services
             }
             catch(Exception ex)
             {
+                
                 throw ex;
                 
             }

@@ -29,6 +29,9 @@ namespace AutoScout
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/Site.css",
                       "~/Content/yeti.bootstrap.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/filtersearch").Include(
+                "~/Scripts/filtersearch.viewmodel.js"));
         }
     }
 }

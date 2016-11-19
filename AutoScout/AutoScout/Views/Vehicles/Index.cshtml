@@ -6,12 +6,16 @@
     var allMakes = ViewBag.AllMakes;
     var allModels = ViewBag.AllModels;
     var allExteriorColors = ViewBag.AllExteriorColors;
+    var allYears = ViewBag.AllYears;
     var error = ViewBag.ErrorMessage != null ? ViewBag.ErrorMessage : null;
+
+    var vehiclesMatchingSearch = Model.ToList();
 }
 <div class="row">
     <div class="padding col-md-12"></div>
 </div>
 <div class="row">
+    
     <!--Filter Search Panel-->
     <div class="col-md-2">
         <div class="panel panel-primary">
@@ -23,28 +27,24 @@
                 <form>
                     <div class="form-group">
                         <input class="pad-right-10" type="checkbox" name="makeCheckBox" data-bind="checked: useMakeField" />
-                        <label for="selectMake">Make</label> 
+                        <label for="selectMake">Make</label>
                         <select class="form-control select-small-text" id="selectMake" data-bind="visible: useMakeField,  value: Make">
-                            @foreach (var make in allMakes){
+                            @foreach (var make in allMakes)
+                            {
                                 <option>@make</option>
                             }
                         </select>
                     </div>
                     <div class="form-group">
-                        <input class="pad-right-10" type="checkbox" name="modelCheckBox" data-bind="checked: useModelField" />
-                        <label for="selectModel">Model</label> 
-                        <select class="form-control select-small-text" id="selectModel" data-bind="visible: useModelField, value: Model">
-                            @foreach (var mod in allModels)
-                            {
-                                <option>@mod</option>
-                            }
-                        </select>
+                        <input class="pad-right-10" type="checkbox" name="modelCheckBox" data-bind="visible: useMakeField, checked: useModelField" />
+                        <label for="selectModel" data-bind="visible: useMakeField">Model</label>
+                        <select class="form-control select-small-text" id="selectModel" data-bind="visible: useModelField, optionsValue: 'description', optionsText: 'description', value: Model"></select>
                     </div>
                     <div class="form-group">
                         <input class="pad-right-10" type="checkbox" name="yearCheckBox" data-bind="checked: useYearField" />
                         <label for="selectYear">Year</label>
                         <select class="form-control select-small-text" id="selectYear" data-bind="visible: useYearField, value: Year">
-                            @foreach (var mod in allModels)
+                            @foreach (var mod in allYears)
                             {
                                 <option>@mod</option>
                             }
@@ -53,50 +53,50 @@
                     <div class="form-group">
                         <input class="pad-right-10" type="checkbox" name="styleCheckBox" data-bind="checked: useStyleField" />
                         <label for="selectStyle">Style</label>
-                        <select class="form-control select-small-text" id="selectStyle" data-bind="visible: useStyleField, options: StyleChoices, optionsText: 'description', value: Style"></select>
+                        <select class="form-control select-small-text" id="selectStyle" data-bind="visible: useStyleField, options: StyleChoices, optionsText: 'description', value: Style, optionsValue: 'description'"></select>
                     </div>
                     <div class="form-group">
                         <input class="pad-right-10" type="checkbox" name="transmissionCheckBox" data-bind="checked: useTransmissionField" />
                         <label for="selectTransmission">Transmission</label>
-                        <select class="form-control select-small-text" id="selectTransmission" data-bind="visible: useTransmissionField, options: TransmissionChoices, optionsText: 'description', value: Transmission"></select>
+                        <select class="form-control select-small-text" id="selectTransmission" data-bind="visible: useTransmissionField, options: TransmissionChoices, optionsText: 'description', value: Transmission, optionsValue: 'description'"></select>
                     </div>
                     <div class="form-group">
                         <input class="pad-right-10" type="checkbox" name="mileageCheckBox" data-bind="checked: useMileageField" />
                         <label for="selectMileage">Mileage</label>
-                        <select class="form-control select-small-text" id="selectMileage" data-bind="visible: useMileageField, options: MileageChoices, optionsText: 'description', value: Mileage"></select>
+                        <select class="form-control select-small-text" id="selectMileage" data-bind="visible: useMileageField, options: MileageChoices, optionsText: 'description', value: Mileage, optionsValue: 'description'"></select>
                     </div>
                     <div class="form-group">
                         <input class="pad-right-10" type="checkbox" name="exteriorColorCheckBox" data-bind="checked: useExteriorColorField" />
                         <label for="selectExteriorColor">ExteriorColor</label>
                         <select class="form-control select-small-text" id="selectExteriorColor" data-bind="visible: useExteriorColorField, value: ExteriorColor">
-                            @foreach(var color in allExteriorColors)
+                            @foreach (var color in allExteriorColors)
                             {
                                 <option>@color</option>
                             }
-                        </select>                               
+                        </select>
                     </div>
                     <div class="form-group">
                         <input class="pad-right-10" type="checkbox" name="priceCheckBox" data-bind="checked: usePriceField" />
                         <label for="selectPrice">Price</label>
-                        <input class="form-control select-small-text" placeholder="Minimum" type="text" data-bind="visible: usePriceField, value: MinimumPrice"/>
+                        <input class="form-control select-small-text" placeholder="Minimum" type="text" data-bind="visible: usePriceField, value: MinimumPrice" />
                         <br />
-                        <input class="form-control select-small-text" placeholder="Maximum" type="text" data-bind="visible: usePriceField, value: MaximumPrice"/>
+                        <input class="form-control select-small-text" placeholder="Maximum" type="text" data-bind="visible: usePriceField, value: MaximumPrice" />
                     </div>
                     <div class="form-group">
                         <input class="pad-right-10" type="checkbox" name="conditionCheckBox" data-bind="checked: useConditionField, value: Condition" />
                         <label for="selectCondition">Condition</label>
-                        <select class="form-control select-small-text" id="selectCondition" data-bind="visible: useConditionField, options: ConditionChoices, optionsText: 'description', value: Condition"></select> 
+                        <select class="form-control select-small-text" id="selectCondition" data-bind="visible: useConditionField, options: ConditionChoices, optionsText: 'description', value: Condition, optionsValue: 'description'"></select>
                     </div>
                     <div class="form-group">
                         <input class="pad-right-10" type="checkbox" name="cylinderCheckBox" data-bind="checked: useCylinderField, value: CylinderCount" />
                         <label for="selectCondition">Engine Cylinders</label>
-                        <select class="form-control select-small-text" id="selectCondition" data-bind="visible: useCylinderField, options: CylinderChoices, optionsText: 'description', value: CylinderCount"></select>
+                        <select class="form-control select-small-text" id="selectCondition" data-bind="visible: useCylinderField, options: CylinderChoices, optionsText: 'description', value: CylinderCount, optionsValue: 'description'"></select>
                     </div>
                 </form>
             </div>
             <div id="testSearchService">
-                <p data-bind="text: Make"></p>
-                <button data-bind="click: SendSearch">Search that Ish</button>
+                <!--<p data-bind="text: Make"></p>-->
+                <button data-bind="click: SendSearch">Search Inventory</button>
             </div>
         </div>
     </div>
@@ -107,7 +107,7 @@
                 <h3 class="panel-title">Results</h3>
             </div>
             <div class="panel-body">
-                @foreach (var item in Model)
+                @*@foreach (var item in vehiclesMatchingSearch)
                 {
                     @Html.Partial("ShortcutListItem", item)
                 }
@@ -115,108 +115,30 @@
                 {
                     <div class="alert alert-danger" role="alert"><p>@ViewBag.ErrorMessage</p></div>
                 }
+                *@
+                <!-- ko foreach: Vehicles() -->
+                    <div class="col-md-3">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h5><span data-bind="text: Year"> </span><span data-bind="text: Make"></span> <span data-bind="text: Model"></span></h5>
+                            </div>
+                            <div class="panel-body">
+                                <div style="position:relative; height: 150px">
+                                    <img id="previewImage" data-bind="attr: { src : PreviewImage }" class="img-rounded img-responsive img-thumbnail center-block" style="max-height: 150px" />
+                                </div>
+                                <h5 class="price"><span data-bind="text: Price"></span></h5>
+                            </div>
+                        </div>
+                    </div>
+                <!-- /ko -->    
+                
+                </div>
             </div>
         </div>
+
+
     </div>
-</div>
 
-<script>
 
-    function FilterSearchCriteriaViewModel(make, model, year, minPrice, maxPrice, minMileage, maxMileage, transmission, style, condition, cylinderNumber, exteriorColor) {
-        return {
-            Make: make,
-            Model: model,
-            Year: year,
-            MinPrice: minPrice,
-            MaxPrice: maxPrice,
-            MinMileage: minMileage,
-            MaxMileage: maxMileage,
-            Transmission: transmission,
-            Style: style,
-            Condition: condition,
-            CylinderNumber: cylinderNumber,
-            ExteriorColor: exteriorColor,
-        }
-    }
+    @Scripts.Render("~/bundles/filtersearch")
 
-    function FilterSearchViewModel(){
-        var self = this;
-
-        self.MileageChoices = ko.observableArray([{ description: "< 50,000" }, { description: "50,000 - 100,000" }, { description: "100,000 - 150,000" }, { description: "150,000 - 200,000" }, { description: "> 200,000" }]);
-        self.StyleChoices = ko.observableArray([{ description: "Coupe" }, { description: "Sedan" }, { description: "Van" }, { description: "Mini Van" }, { description: "SUV" }, { description: "Truck" }]);
-        self.ConditionChoices = ko.observableArray([{ description: "Used" }, { description: "New" }]);
-        self.CylinderChoices = ko.observableArray([{ description: 2 }, { description: 4 }, { description: 6 }, { description: 8 }]);
-        self.TransmissionChoices = ko.observableArray([{ description: "Automatic" }, { description: "Manual" }]);
-       
-        self.useMakeField = ko.observable(false);
-        self.useModelField = ko.observable(false);
-        self.useCylinderField = ko.observable(false);
-        self.useStyleField = ko.observable(false);
-        self.useInteriorColorField = ko.observable(false);
-        self.useExteriorColorField = ko.observable(false);
-        self.useConditionField = ko.observable(false);
-        self.useYearField = ko.observable(false);
-        self.useMileageField = ko.observable(false);
-        self.usePriceField = ko.observable(false);
-        self.useTransmissionField = ko.observable(false);
-
-        self.Make = ko.observable("Jeep");
-        self.Model = ko.observable("");
-        self.CylinderCount = ko.observable("");
-        self.Style = ko.observable("");
-        self.InteriorColor = ko.observable("");
-        self.ExteriorColor = ko.observable("");
-        self.Condition = ko.observable("");
-        self.Year = ko.observable("");
-        self.Mileage = ko.observable("");
-        self.MinimumPrice = ko.observable("");
-        self.MaximumPrice = ko.observable("");
-        self.Transmission = ko.observable("");
-
-        self.MinimumMileage = ko.observable("");
-        self.MaximumMileage = ko.observable("");
-
-        (function() {
-            if(self.Mileage === "< 50,000"){
-                self.MinimumMileage(0);
-                self.MaximumMileage(49999);
-            }
-            else if(self.Mileage === "50,000 - 100,000"){
-                self.MinimumMileage(50000);
-                self.MaximumMileage(100000);
-            }
-            else if(self.Mileage === "100,000 - 150,000"){
-                self.MinimumMileage(100000);
-                self.MaximumMileage(150000);
-            }
-            else if(self.Mileage === "150,000 - 200,000"){
-                self.MinimumMileage(150000);
-                self.MaximumMileage(200000);
-            }
-            else if(self.Mileage === "> 200,000"){
-                self.MinimumMileage(200000);
-                self.MaximumMileage(999999);
-            } else {
-                self.MinimumMileage("");
-                self.MaximumMileage("");
-            }
-            
-        });
-
-        self.SearchData = new FilterSearchCriteriaViewModel(self.Make, self.Model, self.Year, self.MinimumPrice, self.MaximumPrice, self.MinimumMileage, self.MaximumMileage, self.Transmission, self.Style, self.Condition, self.CylinderCount, self.ExteriorColor);
-
-        self.SendSearch = function() {
-            $.ajax({
-                type: "GET",
-                url: "@Url.Action("GetSearchCriteriaResults")",
-                data: ko.toJSON(self.SearchData),
-                success: function(message) {
-                    alert(message);
-                }
-            });
-        }
-        
-    }
-    ko.applyBindings(FilterSearchViewModel);
-
-</script>
