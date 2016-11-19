@@ -14,24 +14,53 @@ namespace AutoScout.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            try
+            {
+                ViewBag.Message = "Your application description page.";
 
-            return View();
+                return View();
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         public ActionResult Contact()
         {
-            
-            var service = new DealershipAccountService(db);
-            var dealershipId = service.GetCurrentUserDealershipIdFromIdentity();
-            ViewBag.Name = service.GetCurrentUserNameFromDealershipId(dealershipId);
+            try
+            {
+                var service = new DealershipAccountService(db);
+                var dealershipId = service.GetCurrentUserDealershipIdFromIdentity();
+                ViewBag.Name = service.GetCurrentUserNameFromDealershipId(dealershipId);
 
-            return View();
+                return View();
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
     }
 }

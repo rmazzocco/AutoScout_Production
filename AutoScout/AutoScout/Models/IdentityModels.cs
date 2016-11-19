@@ -34,5 +34,6 @@ namespace AutoScout.Models
         public DbSet<Dealership> Dealerships { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<VehicleImage> VehicleImages { get; set; }
+        public DbSet<Error> Errors { get; set; }
     }
 }

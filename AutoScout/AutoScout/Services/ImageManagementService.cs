@@ -39,11 +39,12 @@ namespace AutoScout.Services
                     db.SaveChanges();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                
-                throw ex;
-                
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
             }
         }
 
@@ -84,8 +85,10 @@ namespace AutoScout.Services
             }
             catch (Exception ex)
             {
-                throw ex;
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
 
+                throw (ex);
             }
         }
     }

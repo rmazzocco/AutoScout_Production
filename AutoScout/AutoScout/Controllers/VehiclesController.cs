@@ -19,30 +19,40 @@ namespace AutoScout.Controllers
         // GET: Vehicles
         public ActionResult Index()
         {
-            using (var db = new AutoScoutDBContext())
+            try
             {
-                var service = new DealershipAccountService(db);
-                int currentUserId = service.GetCurrentUserDealershipIdFromIdentity();
-                var dealership = db.Dealerships.FirstOrDefault(x => x.Id == currentUserId);
-                
-                var allMakes = db.Vehicles.Select(x => x.Make).ToList().Distinct();
-                var allModels = db.Vehicles.Select(x => x.Model).ToList().Distinct();
-                var allExteriorColors = db.Vehicles.Select(x => x.ExteriorColor).ToList().Distinct();
-                var allYears = db.Vehicles.Select(x => x.Year).ToList().Distinct();
-
-                ViewBag.AllModels = allModels;
-                ViewBag.AllMakes = allMakes;
-                ViewBag.AllExteriorColors = allExteriorColors;
-                ViewBag.AllYears = allYears;
-
-                var vehicles = db.Vehicles.Where(x => x.Make != null).ToList();
-                if(vehicles.Count < 1 || vehicles == null)
+                using (var db = new AutoScoutDBContext())
                 {
-                    ViewBag.ErrorMessage = "Sorry, your search returned no results. Please change your search criteria and try again.";
-                }
-                ViewBag.AllVehicles = vehicles.ToList();
+                    var service = new DealershipAccountService(db);
+                    int currentUserId = service.GetCurrentUserDealershipIdFromIdentity();
+                    var dealership = db.Dealerships.FirstOrDefault(x => x.Id == currentUserId);
 
-                return View(vehicles);
+                    var allMakes = db.Vehicles.Select(x => x.Make).ToList().Distinct();
+                    var allModels = db.Vehicles.Select(x => x.Model).ToList().Distinct();
+                    var allExteriorColors = db.Vehicles.Select(x => x.ExteriorColor).ToList().Distinct();
+                    var allYears = db.Vehicles.Select(x => x.Year).ToList().Distinct();
+
+                    ViewBag.AllModels = allModels;
+                    ViewBag.AllMakes = allMakes;
+                    ViewBag.AllExteriorColors = allExteriorColors;
+                    ViewBag.AllYears = allYears;
+
+                    var vehicles = db.Vehicles.Where(x => x.Make != null).ToList();
+                    if (vehicles.Count < 1 || vehicles == null)
+                    {
+                        ViewBag.ErrorMessage = "Sorry, your search returned no results. Please change your search criteria and try again.";
+                    }
+                    ViewBag.AllVehicles = vehicles.ToList();
+
+                    return View(vehicles);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
             }
         }
         
@@ -50,34 +60,54 @@ namespace AutoScout.Controllers
         // GET: Vehicles/Details/5
         public ActionResult Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Vehicle vehicle = db.Vehicles.Find(id);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Vehicle vehicle = db.Vehicles.Find(id);
 
-            if(vehicle != null)
-            {
-                string make = vehicle.Make;
-                string model = vehicle.Model;
-                string year = vehicle.Year.ToString();
-                string item = year + " " + make + " " + model;
-                ViewBag.stringDescription = item;
-            }
-            if (vehicle == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.Images = db.VehicleImages.Where(x => x.VehicleId == id).ToList();
+                if (vehicle != null)
+                {
+                    string make = vehicle.Make;
+                    string model = vehicle.Model;
+                    string year = vehicle.Year.ToString();
+                    string item = year + " " + make + " " + model;
+                    ViewBag.stringDescription = item;
+                }
+                if (vehicle == null)
+                {
+                    return HttpNotFound();
+                }
+                ViewBag.Images = db.VehicleImages.Where(x => x.VehicleId == id).ToList();
 
-            return View(vehicle);
+                return View(vehicle);
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         // GET: Vehicles/Create
         public ActionResult Create()
         {
-            ViewBag.DealershipId = new SelectList(db.Dealerships, "Id", "CompanyName");
-            return View();
+            try
+            {
+                ViewBag.DealershipId = new SelectList(db.Dealerships, "Id", "CompanyName");
+                return View();
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         // POST: Vehicles/Create
@@ -93,40 +123,59 @@ namespace AutoScout.Controllers
             vehicle.DealershipId = dealershipId;
             vehicle.DateCreated = DateTime.Now.ToUniversalTime();
             */
-
-            if (ModelState.IsValid)
+            try
             {
-                db.Vehicles.Add(vehicle);
-                db.SaveChanges();
-                return RedirectToAction("AddImage", new { id = vehicle.Id });
-            }
+                if (ModelState.IsValid)
+                {
+                    db.Vehicles.Add(vehicle);
+                    db.SaveChanges();
+                    return RedirectToAction("AddImage", new { id = vehicle.Id });
+                }
 
-            ViewBag.DealershipId = new SelectList(db.Dealerships, "Id", "CompanyName", vehicle.DealershipId);
-            return View(vehicle);
+                ViewBag.DealershipId = new SelectList(db.Dealerships, "Id", "CompanyName", vehicle.DealershipId);
+                return View(vehicle);
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         // GET: Vehicles/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Vehicle vehicle = db.Vehicles.Find(id);
+                if (vehicle != null)
+                {
+                    string make = vehicle.Make;
+                    string model = vehicle.Model;
+                    string year = vehicle.Year.ToString();
+                    string item = year + " " + make + " " + model;
+                    ViewBag.StringDescription = item;
+                }
+                if (vehicle == null)
+                {
+                    return HttpNotFound();
+                }
+                ViewBag.DealershipId = new SelectList(db.Dealerships, "Id", "CompanyName", vehicle.DealershipId);
+                return PartialView(vehicle);
             }
-            Vehicle vehicle = db.Vehicles.Find(id);
-            if (vehicle != null)
+            catch (Exception ex)
             {
-                string make = vehicle.Make;
-                string model = vehicle.Model;
-                string year = vehicle.Year.ToString();
-                string item = year + " " + make + " " + model;
-                ViewBag.StringDescription = item;
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
             }
-            if (vehicle == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.DealershipId = new SelectList(db.Dealerships, "Id", "CompanyName", vehicle.DealershipId);
-            return PartialView(vehicle);
         }
 
         // POST: Vehicles/Edit/5
@@ -136,38 +185,57 @@ namespace AutoScout.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,VIN,Mileage,ExteriorColor,InteriorColor,Make,Model,Year,Price,Transmission,Style,Condition,CylinderNumber,TransmissionType")] Vehicle vehicle)
         {
-
-            if (ModelState.IsValid)
+            try
             {
-                db.Entry(vehicle).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    db.Entry(vehicle).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                //ViewBag.DealershipId = new SelectList(db.Dealerships, "Id", "CompanyName", vehicle.DealershipId);
+                return View(vehicle);
             }
-            //ViewBag.DealershipId = new SelectList(db.Dealerships, "Id", "CompanyName", vehicle.DealershipId);
-            return View(vehicle);
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         // GET: Vehicles/Delete/5
         public ActionResult Delete(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Vehicle vehicle = db.Vehicles.Find(id);
+                if (vehicle != null)
+                {
+                    string make = vehicle.Make;
+                    string model = vehicle.Model;
+                    string year = vehicle.Year.ToString();
+                    string item = year + " " + make + " " + model;
+                    ViewBag.stringDescription = item;
+                }
+                if (vehicle == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(vehicle);
             }
-            Vehicle vehicle = db.Vehicles.Find(id);
-            if (vehicle != null)
+            catch (Exception ex)
             {
-                string make = vehicle.Make;
-                string model = vehicle.Model;
-                string year = vehicle.Year.ToString();
-                string item = year + " " + make + " " + model;
-                ViewBag.stringDescription = item;
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
             }
-            if (vehicle == null)
-            {
-                return HttpNotFound();
-            }
-            return View(vehicle);
         }
 
         // POST: Vehicles/Delete/5
@@ -175,80 +243,138 @@ namespace AutoScout.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Vehicle vehicle = db.Vehicles.Find(id);
-            ViewBag.VehicleMake = vehicle.Make;
-            ViewBag.VehicleModel = vehicle.Model;
-            ViewBag.Year = vehicle.Year;
-            db.Vehicles.Remove(vehicle);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            try
+            {
+                Vehicle vehicle = db.Vehicles.Find(id);
+                ViewBag.VehicleMake = vehicle.Make;
+                ViewBag.VehicleModel = vehicle.Model;
+                ViewBag.Year = vehicle.Year;
+                db.Vehicles.Remove(vehicle);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         //GET
         public ActionResult AddImage(int? id)
         {
-            var vehicle = db.Vehicles.FirstOrDefault(x => x.Id == id);
-            
-            if (vehicle != null)
+            try
             {
-                string make = vehicle.Make;
-                string vModel = vehicle.Model;
-                string year = vehicle.Year.ToString();
-                string item = year + " " + make + " " + vModel;
-                ViewBag.stringDescription = item;
-            }
+                var vehicle = db.Vehicles.FirstOrDefault(x => x.Id == id);
 
-            VehicleImage image = new VehicleImage();
-            return View(image);
+                if (vehicle != null)
+                {
+                    string make = vehicle.Make;
+                    string vModel = vehicle.Model;
+                    string year = vehicle.Year.ToString();
+                    string item = year + " " + make + " " + vModel;
+                    ViewBag.stringDescription = item;
+                }
+
+                VehicleImage image = new VehicleImage();
+                return View(image);
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         //GET - retrieve vehicles that meet custom search criteria
         public void SearchInventory()
         {
-            var service = new VehicleSearchService(db);
-            service.SearchInventory(null, null, 2005, -1, -1, -1, -1, null, null, null, -1, null);
-            service.SearchInventory(null, null, -1, -1, -1, -1, -1, null, null, null, -1, "Silver");
-            
+            try
+            {
+                var service = new VehicleSearchService(db);
+                service.SearchInventory(null, null, 2005, -1, -1, -1, -1, null, null, null, -1, null);
+                service.SearchInventory(null, null, -1, -1, -1, -1, -1, null, null, null, -1, "Silver");
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         //Get - retrieve vehicle search results
         public JsonResult GetSearchResults(string make, string model, string transmission, string style, string condition, int year, int minPrice, int maxPrice, int minMileage, int maxMileage, int cylinderNumber, string exteriorColor)
         {
-            using (var db = new AutoScoutDBContext())
+            try
             {
-                //create instance of Vehicle Search Service
-                var vehicleSearchService = new VehicleSearchService(db);
-
-                //send search result criteria from parameters to SearchInventory method which will return matching vehicles
-                var searchResults = vehicleSearchService.SearchInventory(make, model, year, minPrice, maxPrice, minMileage, maxMileage, transmission, style, condition, cylinderNumber, exteriorColor);
-                var vehicleViewModels = new List<VehicleSearchCriteriaViewModel>();
-                
-                foreach(var item in searchResults)
+                using (var db = new AutoScoutDBContext())
                 {
-                    vehicleViewModels.Add(new VehicleSearchCriteriaViewModel(item.Id, item.Make, item.Model, item.Year, item.Price, item.Mileage, item.Transmission, item.Style, item.Condition, item.CylinderNumber, item.ExteriorColor));
+                    //create instance of Vehicle Search Service
+                    var vehicleSearchService = new VehicleSearchService(db);
+
+                    //send search result criteria from parameters to SearchInventory method which will return matching vehicles
+                    var searchResults = vehicleSearchService.SearchInventory(make, model, year, minPrice, maxPrice, minMileage, maxMileage, transmission, style, condition, cylinderNumber, exteriorColor);
+                    var vehicleViewModels = new List<VehicleSearchCriteriaViewModel>();
+
+                    foreach (var item in searchResults)
+                    {
+                        vehicleViewModels.Add(new VehicleSearchCriteriaViewModel(item.Id, item.Make, item.Model, item.Year, item.Price, item.Mileage, item.Transmission, item.Style, item.Condition, item.CylinderNumber, item.ExteriorColor));
+                    }
+                    return Json(vehicleViewModels, JsonRequestBehavior.AllowGet);
                 }
-                return Json(vehicleViewModels, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
             }
         }
 
         [HttpGet]
         public string GetVehicleDealershipName(int dealershipId)
         {
-            var vehicleSearchService = new VehicleSearchService(db);
-            var dealershipOfVehicle = vehicleSearchService.GetDealershipData(dealershipId);
-            var name = dealershipOfVehicle.CompanyName;
-            return name;
+            try
+            {
+                var vehicleSearchService = new VehicleSearchService(db);
+                var dealershipOfVehicle = vehicleSearchService.GetDealershipData(dealershipId);
+                var name = dealershipOfVehicle.CompanyName;
+                return name;
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
       
         [HttpGet]
         public JsonResult GetModelsFromMake(string make)
         {
-            var service = new VehicleSearchService(db);
-            var models = service.GetAllModelsFromMake(make);
+            try
+            {
+                var service = new VehicleSearchService(db);
+                var models = service.GetAllModelsFromMake(make);
 
-            return Json(models, JsonRequestBehavior.AllowGet);
+                return Json(models, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
 
+                throw (ex);
+            }
         }
 
        
@@ -256,15 +382,25 @@ namespace AutoScout.Controllers
         [HttpGet]
         public JsonResult GetInitialVehicleListData()
         {
-            var service = new VehicleSearchService(db);
-            var vehicles = service.GetNewestVehicles();
-            var vehicleViewModels = new List<VehicleSearchCriteriaViewModel>();
-
-            foreach (var item in vehicles)
+            try
             {
-                vehicleViewModels.Add(new VehicleSearchCriteriaViewModel(item.Id, item.Make, item.Model, item.Year, item.Price, item.Mileage, item.Transmission, item.Style, item.Condition, item.CylinderNumber, item.ExteriorColor));
+                var service = new VehicleSearchService(db);
+                var vehicles = service.GetNewestVehicles();
+                var vehicleViewModels = new List<VehicleSearchCriteriaViewModel>();
+
+                foreach (var item in vehicles)
+                {
+                    vehicleViewModels.Add(new VehicleSearchCriteriaViewModel(item.Id, item.Make, item.Model, item.Year, item.Price, item.Mileage, item.Transmission, item.Style, item.Condition, item.CylinderNumber, item.ExteriorColor));
+                }
+                return Json(vehicleViewModels, JsonRequestBehavior.AllowGet);
             }
-            return Json(vehicleViewModels, JsonRequestBehavior.AllowGet);
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         
@@ -274,32 +410,52 @@ namespace AutoScout.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult AddImage(int id, VehicleImage model, HttpPostedFileBase imageFile)
         {
-            var db = new AutoScoutDBContext();
-            //var vehicle = db.Vehicles.FirstOrDefault(x => x.Id == vehicleId);
-            Vehicle vehicle = db.Vehicles.Find(id);
-
-            if (vehicle != null)
+            try
             {
-                string make = vehicle.Make;
-                string vModel = vehicle.Model;
-                string year = vehicle.Year.ToString();
-                string item = year + " " + make + " " + vModel;
-                ViewBag.stringDescription = item;
-            }
+                var db = new AutoScoutDBContext();
+                //var vehicle = db.Vehicles.FirstOrDefault(x => x.Id == vehicleId);
+                Vehicle vehicle = db.Vehicles.Find(id);
 
-            if (imageFile != null)
+                if (vehicle != null)
+                {
+                    string make = vehicle.Make;
+                    string vModel = vehicle.Model;
+                    string year = vehicle.Year.ToString();
+                    string item = year + " " + make + " " + vModel;
+                    ViewBag.stringDescription = item;
+                }
+
+                if (imageFile != null)
+                {
+                    var service = new ImageManagementService(db);
+                    service.AssignImageToVehicle(id, imageFile);
+
+                }
+
+                return View(model);
+            }
+            catch (Exception ex)
             {
-                var service = new ImageManagementService(db);
-                service.AssignImageToVehicle(id, imageFile);
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
 
+                throw (ex);
             }
-            
-            return View(model);
         }
 
         public ActionResult ListItem(Vehicle vehicle)
         {
-            return PartialView(vehicle);
+            try
+            {
+                return PartialView(vehicle);
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         protected override void Dispose(bool disposing)

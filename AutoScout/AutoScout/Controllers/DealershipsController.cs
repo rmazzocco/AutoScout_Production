@@ -22,51 +22,81 @@ namespace AutoScout.Controllers
         // GET: Dealerships
         public async Task<ActionResult> Index()
         {
-            var dealerships = db.Dealerships.Include(d => d.AutoScoutIdentityUser);
-            return View(await dealerships.ToListAsync());
+            try
+            {
+                var dealerships = db.Dealerships.Include(d => d.AutoScoutIdentityUser);
+                return View(await dealerships.ToListAsync());
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         // GET: Dealerships/Details/5
         public async Task<ActionResult> Details(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Dealership dealership = await db.Dealerships.FindAsync(id);
+                if (dealership == null)
+                {
+                    return HttpNotFound();
+                }
+                return View(dealership);
             }
-            Dealership dealership = await db.Dealerships.FindAsync(id);
-            if (dealership == null)
+            catch (Exception ex)
             {
-                return HttpNotFound();
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
             }
-            return View(dealership);
         }
 
         // GET: Dealerships/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Dealership dealership = await db.Dealerships.FindAsync(id);
+                ViewBag.EditManager = new DealershipManager
+                {
+                    Id = dealership.Id,
+                    CompanyName = dealership.CompanyName,
+                    Email = dealership.Email,
+                    City = dealership.City,
+                    State = dealership.State,
+                    ZipCode = dealership.ZipCode,
+                    Notes = dealership.Notes,
+                    PhoneNumber = dealership.PhoneNumber,
+                    FaxNumber = dealership.FaxNumber
+                };
+                if (dealership == null)
+                {
+                    return HttpNotFound();
+                }
+                ViewBag.AutoScoutIdentityUserId = new SelectList(db.Dealerships, "Id", "Email", dealership.AutoScoutIdentityUserId);
+                return View(dealership);
             }
-            Dealership dealership = await db.Dealerships.FindAsync(id);
-            ViewBag.EditManager = new DealershipManager
+            catch (Exception ex)
             {
-                Id = dealership.Id,
-                CompanyName = dealership.CompanyName,
-                Email = dealership.Email,
-                City = dealership.City,
-                State = dealership.State,
-                ZipCode = dealership.ZipCode,
-                Notes = dealership.Notes,
-                PhoneNumber = dealership.PhoneNumber,
-                FaxNumber = dealership.FaxNumber
-            };
-            if (dealership == null)
-            {
-                return HttpNotFound();
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
             }
-            ViewBag.AutoScoutIdentityUserId = new SelectList(db.Dealerships, "Id", "Email", dealership.AutoScoutIdentityUserId);
-            return View(dealership);
         }
         
         // POST: Dealerships/Edit/5
@@ -76,49 +106,79 @@ namespace AutoScout.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Id,CompanyName,Email,City,State,ZipCode,FaxNumber,Notes,PhoneNumber")] Dealership dealership)
         {
-            var service = new DealershipAccountService(db);
-            string identityId = service.GetCurrentUserIdentity();
-            dealership.AutoScoutIdentityUserId = identityId;
-
-            if (ModelState.IsValid)
+            try
             {
-                db.Entry(dealership).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-                ViewBag.ResponseMessage = "Your changes have been saved.";
+                var service = new DealershipAccountService(db);
+                string identityId = service.GetCurrentUserIdentity();
+                dealership.AutoScoutIdentityUserId = identityId;
+
+                if (ModelState.IsValid)
+                {
+                    db.Entry(dealership).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                    ViewBag.ResponseMessage = "Your changes have been saved.";
+                }
+                //ViewBag.AutoScoutIdentityUserId = new SelectList(db.Dealerships, "Id", "Email", dealership.AutoScoutIdentityUserId);
+                return View("ManageProfile");
             }
-            //ViewBag.AutoScoutIdentityUserId = new SelectList(db.Dealerships, "Id", "Email", dealership.AutoScoutIdentityUserId);
-            return View("ManageProfile");
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         //GET - manage profile page and vehicles active and viewable from public search
         //[ValidateAntiForgeryToken]
         public async Task<ActionResult> ManageProfile(int? id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                Dealership dealership = await db.Dealerships.FindAsync(id);
+                return View(dealership);
             }
-            Dealership dealership = await db.Dealerships.FindAsync(id);
-            return View(dealership);
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         //Post - set images for dealership profile's header image and icon
         [HttpPost]
         public async Task<ActionResult> SetProfileImages(HttpPostedFileBase headerImageFile, HttpPostedFileBase iconImageFile)
         {
-            //get the dealer id from dealership account service
-            var dealershipService = new DealershipAccountService(db);
-            var currentDealerId = dealershipService.GetCurrentUserDealershipIdFromIdentity();
-
-            //add images to Dealership table using image service
-            var dealership = await db.Dealerships.FirstOrDefaultAsync(x => x.Id == currentDealerId);
-            if(dealership != null)
+            try
             {
-                var imageService = new ImageManagementService(db);
-                imageService.AssignProfileImagesToDealership(currentDealerId, headerImageFile, iconImageFile);
-            }
+                //get the dealer id from dealership account service
+                var dealershipService = new DealershipAccountService(db);
+                var currentDealerId = dealershipService.GetCurrentUserDealershipIdFromIdentity();
 
-            return View("ManageProfile", dealership);
+                //add images to Dealership table using image service
+                var dealership = await db.Dealerships.FirstOrDefaultAsync(x => x.Id == currentDealerId);
+                if (dealership != null)
+                {
+                    var imageService = new ImageManagementService(db);
+                    imageService.AssignProfileImagesToDealership(currentDealerId, headerImageFile, iconImageFile);
+                }
+
+                return View("ManageProfile", dealership);
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         //Get/Edit/ - return JSON for knockout.viewmodel
@@ -154,9 +214,13 @@ namespace AutoScout.Controllers
 
                 return Json(dealershipEditManager, JsonRequestBehavior.AllowGet);
 
-            }catch(Exception exception)
+            }
+            catch (Exception ex)
             {
-                throw (exception);
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
             }
         }
 

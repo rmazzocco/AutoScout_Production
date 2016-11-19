@@ -18,36 +18,74 @@ namespace AutoScout.Services
 
         public void RegisterDealershipAccount(string companyName, string autoScoutIdentityUserId, string email, string city, string state, string zipCode, string phoneNumber, string faxNumber, string notes)
         {
-            var db = new AutoScoutDBContext();
-            var dealership = new Dealership { CompanyName = companyName, AutoScoutIdentityUserId = autoScoutIdentityUserId, Email = email, City = city, State = state, ZipCode = zipCode, PhoneNumber = phoneNumber, FaxNumber = faxNumber, Notes = notes };
-            db.Dealerships.Add(dealership);
-            db.SaveChanges();
+            try
+            {
+                var db = new AutoScoutDBContext();
+                var dealership = new Dealership { CompanyName = companyName, AutoScoutIdentityUserId = autoScoutIdentityUserId, Email = email, City = city, State = state, ZipCode = zipCode, PhoneNumber = phoneNumber, FaxNumber = faxNumber, Notes = notes };
+                db.Dealerships.Add(dealership);
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         public int GetCurrentUserDealershipIdFromIdentity()
         {
-            
-            var identityId = HttpContext.Current.User.Identity.GetUserId();
-            if(identityId != null)
+            try
             {
-                var dealershipId = db.Dealerships.FirstOrDefault(x => x.AutoScoutIdentityUserId == identityId).Id;
-                return dealershipId;
-            }
+                var identityId = HttpContext.Current.User.Identity.GetUserId();
+                if (identityId != null)
+                {
+                    var dealershipId = db.Dealerships.FirstOrDefault(x => x.AutoScoutIdentityUserId == identityId).Id;
+                    return dealershipId;
+                }
 
-            return -1;
-            
+                return -1;
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         public string GetCurrentUserIdentity()
         {
-            var identityId = HttpContext.Current.User.Identity.GetUserId();
-            return identityId;
+            try
+            {
+                var identityId = HttpContext.Current.User.Identity.GetUserId();
+                return identityId;
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
 
         public string GetCurrentUserNameFromDealershipId(int dealershipId)
         {
-            var companyName = db.Dealerships.FirstOrDefault(x => x.Id == dealershipId).CompanyName;
-            return companyName;
+            try
+            {
+                var companyName = db.Dealerships.FirstOrDefault(x => x.Id == dealershipId).CompanyName;
+                return companyName;
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
     }
 }
