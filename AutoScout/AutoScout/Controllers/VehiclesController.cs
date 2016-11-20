@@ -324,7 +324,8 @@ namespace AutoScout.Controllers
 
                     foreach (var item in searchResults)
                     {
-                        vehicleViewModels.Add(new VehicleSearchCriteriaViewModel(item.Id, item.Make, item.Model, item.Year, item.Price, item.Mileage, item.Transmission, item.Style, item.Condition, item.CylinderNumber, item.ExteriorColor));
+                        var companyName = db.Dealerships.FirstOrDefault(x => x.Id == item.DealershipId).CompanyName;
+                        vehicleViewModels.Add(new VehicleSearchCriteriaViewModel(item.Id, item.Make, item.Model, item.Year, item.Price, item.Mileage, item.Transmission, item.Style, item.Condition, item.CylinderNumber, item.ExteriorColor, item.DealershipId, companyName));
                     }
                     return Json(vehicleViewModels, JsonRequestBehavior.AllowGet);
                 }
@@ -390,7 +391,8 @@ namespace AutoScout.Controllers
 
                 foreach (var item in vehicles)
                 {
-                    vehicleViewModels.Add(new VehicleSearchCriteriaViewModel(item.Id, item.Make, item.Model, item.Year, item.Price, item.Mileage, item.Transmission, item.Style, item.Condition, item.CylinderNumber, item.ExteriorColor));
+                    var companyName = db.Dealerships.FirstOrDefault(x => x.Id == item.DealershipId).CompanyName;
+                    vehicleViewModels.Add(new VehicleSearchCriteriaViewModel(item.Id, item.Make, item.Model, item.Year, item.Price, item.Mileage, item.Transmission, item.Style, item.Condition, item.CylinderNumber, item.ExteriorColor, item.DealershipId, companyName));
                 }
                 return Json(vehicleViewModels, JsonRequestBehavior.AllowGet);
             }

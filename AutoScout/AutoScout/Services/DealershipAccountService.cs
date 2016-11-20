@@ -87,5 +87,29 @@ namespace AutoScout.Services
                 throw (ex);
             }
         }
+
+        public void SaveDealershipDetails(int id, string companyName, string email, string city, string state, string zipCode, string phoneNumber, string faxNumber, string notes)
+        {
+            try
+            {
+                var dealership = db.Dealerships.FirstOrDefault(x => x.Id == id);
+                dealership.CompanyName = companyName;
+                dealership.Email = email;
+                dealership.City = city;
+                dealership.State = state;
+                dealership.ZipCode = zipCode;
+                dealership.PhoneNumber = phoneNumber;
+                dealership.FaxNumber = faxNumber;
+                dealership.Notes = notes;
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
     }
 }

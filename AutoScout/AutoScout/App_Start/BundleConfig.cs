@@ -32,6 +32,11 @@ namespace AutoScout
 
             bundles.Add(new ScriptBundle("~/bundles/filtersearch").Include(
                 "~/Scripts/filtersearch.viewmodel.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/dealership").Include(
+                "~/Scripts/dealership.viewmodel.js"));
+
+            
         }
     }
 }

@@ -1,61 +1,108 @@
-﻿var dealershipViewModel;
+﻿function DealershipViewModel() {
 
-function Dealership() {
     var self = this;
 
+    $(document).ready(function () {
+        self.LoadCurrentDetails();
+    });
 
-}
+    self.Id = ko.observable("");
+    self.CompanyName = ko.observable("");
+    self.Email = ko.observable("");
+    self.City = ko.observable("");
+    self.State = ko.observable("");
+    self.ZipCode = ko.observable("");
+    self.PhoneNumber = ko.observable("");
+    self.FaxNumber = ko.observable("");
+    self.Notes = ko.observable("");
 
-function DealershipViewModel(id, companyName, email, city, state, zipCode, notes, phoneNumber, faxNumber) {
-    var self = this;
-
-    //observables
-    self.Id = ko.observable(id);
-    self.CompanyName = ko.observable(companyName);
-    self.Email = ko.observable(email);
-    self.City = ko.observable(city);
-    self.State = ko.observable(state);
-    self.ZipCode = ko.observable(zipCode);
-    self.PhoneNumber = ko.observable(phoneNumber);
-    self.FaxNumber = ko.observable(faxNumber);
-
-    self.DealershipData = new Dealership();
-
-    self.GetDealershipInfo = function () {
+    //load current dealership details from server, called on page load
+    self.LoadCurrentDetails = function () {
         $.ajax({
             type: "GET",
-            url: "/Dealerships/GetCurrentDealershipInfo/",
-            contentType: 'application/json',
+            url: "Dealerships/GetCurrentDealershipInfo/",
             success: function (data) {
-                self.DealershipData = new Dealership(data.Id, data.CompanyName, data.Email, data.City, data.State, data.ZipCode, data.Notes, data.PhoneNumber, data.faxNumber);
-            },
-
+                self.Id(data.Id);
+                self.CompanyName(data.CompanyName);
+                self.Email(data.Email);
+                self.City(data.City);
+                self.State(data.State);
+                self.ZipCode(data.ZipCode);
+                self.PhoneNumber(data.PhoneNumber);
+                self.FaxNumber(data.FaxNumber);
+                self.Notes(data.Notes);
+            }
         });
-    }
+    };
 
-    self.EditDealershipInfo = function () {
+    self.SaveDetailChanges = function () {
         $.ajax({
             type: "POST",
-            url: "/Dealerships/Edit/" + self.Id(),
-            contentType: "application/json",
+            url: "Dealerships/EditDetails/",
+            data: {
+                id: self.Id,
+                companyName: self.CompanyName,
+                email: self.Email,
+                city: self.City,
+                state: self.State,
+                zipCode: self.ZipCode,
+                phoneNumber: self.PhoneNumber,
+                faxNumber: self.FaxNumber,
+                notes: self.Notes
+            },
             success: function (data) {
-
+                alert("Your changes have been successfully saved.");
             }
-
         });
-    }
+    };
 
-}
-dealershipViewModel = new DealershipViewModel();
+    /*self.HeaderImageFile = ko.observable(null);
+    self.IconImageFile = ko.observable(null);
+
+    self.SaveImages = function () {
+        $.ajax({
+            type: "POST",
+            url: "Dealerships/EditImages/",
+            data: {
+                headerImageFile: self.HeaderImageFile,
+                iconImageFile: self.IconImageFile
+            },
+            success: function (success) {
+                alert("Your changes have been successfully saved;")
+            }
+        });
+    };
+
+    
+    self.HeaderImageName = ko.computed(function () {
+        return !!self.HeaderImageFile() ? self.HeaderImageFile().name : '-';
+    });
+
+    self.IconImageName = ko.computed(function () {
+        return !!self.IconImageFile() ? self.IconImageFile().name : '-';
+    });
+
+    self.Clear = function () {
+        self.HeaderImageFile(null);
+        self.IconImageFile(null);
+    };
+
+    ko.bindingHandlers.fileUpload = {
+        init: function (element, valueAccessor) {
+            $(element).change(function () {
+                valueAccessor()(element.files[0]);
+            });
+        },
+        update: function (element, valueAccessor) {
+            if (ko.unwrap(valueAccessor()) === null) {
+                $(element).wrap('<form>').closest('form').get(0).reset();
+                $(element).unwrap();
+            }
+        }
+    }*/
+
+};
 
 
 
-// on document ready
-$(document).ready(function () {
-
-    // bind view model to referring view
-    ko.applyBindings(dealershipViewModel);
-
-    // load student data
-    dealershipViewModel.GetDealershipInfo();
-});
+ko.applyBindings(DealershipViewModel);

@@ -1,74 +1,162 @@
-﻿@model IEnumerable<AutoScout.Models.Dealership>
+﻿@model AutoScout.Models.Dealership
+
+
+@using Newtonsoft.Json;
 
 @{
-    ViewBag.Title = "Index";
-    
+    var newVehicle = new AutoScout.Models.Vehicle();
 }
 
+<div class="row">
+    <div class="col-md-12">
+        <h2>Edit Profile Info</h2>
+        <hr />
+    </div>
+</div>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.AutoScoutIdentityUser.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CompanyName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.City)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.State)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ZipCode)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Active)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </th>
-    </tr>
+<div class="row">
+    <div class="col-md-6">
+        <div id="mainContent" class="container-fluid">
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.AutoScoutIdentityUser.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CompanyName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.City)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.State)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ZipCode)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Active)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PhoneNumber)
-        </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
-    </tr>
-}
 
-</table>
+           
+                @Html.AntiForgeryToken()
+                <h3>Details</h3>
+
+                <br />
+
+                <div class="form-horizontal">
+                   
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="CompanyName">Company Name</label>
+                        <div class="col-md-10">
+                            <input class="form-control text-box single-line" id="CompanyName" name="CompanyName" type="text" data-bind="value: CompanyName" />
+                            <span class="field-validation-valid text-danger" data-valmsg-for="CompanyName" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="Email">Email</label>
+                        <div class="col-md-10">
+                            <input class="form-control text-box single-line" id="Email" name="Email" type="text" data-bind="value: Email" />
+                            <span class="field-validation-valid text-danger" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="City">City</label>
+                        <div class="col-md-10">
+                            <input class="form-control text-box single-line" id="City" name="City" type="text" data-bind="value: City" />
+                            <span class="field-validation-valid text-danger" data-valmsg-for="City" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="State">State</label>
+                        <div class="col-md-10">
+                            <input class="form-control text-box single-line" id="State" name="State" type="text" data-bind="value: State" />
+                            <span class="field-validation-valid text-danger" data-valmsg-for="State" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="ZipCode">Zip Code</label>
+                        <div class="col-md-10">
+                            <input class="form-control text-box single-line" id="ZipCode" name="ZipCode" type="text" data-bind="value: ZipCode" />
+                            <span class="field-validation-valid text-danger" data-valmsg-for="ZipCode" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="PhoneNumber">Phone Number</label>
+                        <div class="col-md-10">
+                            <input class="form-control text-box single-line" id="PhoneNumber" name="PhoneNumber" type="text" data-bind="value: PhoneNumber" />
+                            <span class="field-validation-valid text-danger" data-valmsg-for="PhoneNumber" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="FaxNumber">Fax Number</label>
+                        <div class="col-md-10">
+                            <input class="form-control text-box single-line" id="FaxNumber" name="FaxNumber" type="text" data-bind="value: FaxNumber" />
+                            <span class="field-validation-valid text-danger" data-valmsg-for="FaxNumber" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="Notes">Notes</label>
+                        <div class="col-md-10">
+                            <textarea class="form-control" rows="5" id="Notes" data-bind="value: Notes"></textarea>
+                            <span class="field-validation-valid text-danger" data-valmsg-for="Notes" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Save" data-bind="click: SaveDetailChanges()" class="btn btn-default" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-offset-2">
+                    <p>@ViewBag.ResponseMessage</p>
+                </div>
+
+            
+
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                @* @Html.Partial("SetImages") *@
+
+
+                <div class="col-md-offset-1 container-fluid">
+                    @using (Html.BeginForm("SetProfileImages", "Dealerships", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="form-horizontal">
+                            <h3>Images</h3>
+
+                            <br />
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Header</label>
+                                <div class="col-md-10">
+                                    <input type="file" id="headerImageFile" name="headerImageFile" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Icon</label>
+                                <div class="col-md-10">
+                                    <input type="file" id="iconImageFile" name="iconImageFile" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Save" class="btn btn-default" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                @Html.Partial("ProfileImageSelections", Model)
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        @Html.ActionLink("Add a New Vehicle to Inventory", "Create", "Vehicles")
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/dealership")

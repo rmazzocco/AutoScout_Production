@@ -1,12 +1,12 @@
 ﻿    
-function VehicleViewModel(id, make, model, year, style, price, mileage, exteriorColor, cylinderCount, transmission, condition, imageBytes) {
+function VehicleViewModel(id, make, model, year, style, price, mileage, exteriorColor, cylinderCount, transmission, condition, imageBytes, dealershipId, dealershipName) {
     var self = this;
     self.Id = id;
     self.Make = make;
     self.Model = model;
-    self.Year = year;
+    self.Year = year  + " ";
     self.Style = style;
-    self.Price = price;
+    self.Price = "$" + price + ".00";
     self.Mileage = mileage;
     self.ExteriorColor = exteriorColor;
     self.CylinderCount = cylinderCount;
@@ -14,21 +14,57 @@ function VehicleViewModel(id, make, model, year, style, price, mileage, exterior
     self.Condition = condition;
     self.ImageBytes = imageBytes;
     self.PreviewImage = "data:image/png;base64," + imageBytes;
-   
-    /*self.GetDealershipName = function () {
+    self.DealershipName = " " + dealershipName;
+    self.DealershipId = dealershipId
+
+
+    /*
+    self.ViewVehicleClicked = ko.observable(false);
+    self.ViewDealershipClicked = ko.observable(false);
+
+    
+    self.ExecuteVehicleClick = function () {
+        self.ViewVehicleClicked(true);
+    }
+
+    self.ExecuteDealershipClick = function () {
+        self.ViewDealershipClicked(true);
+    }*/
+  
+    self.GetDealershipName = function () {
         $.ajax({
             type: "GET",
-            url: "Vehicles/GetDealershipName/",
+            url: "Vehicles/GetVehicleDealershipName/",
             data: {
                 dealershipId: self.DealershipId
             },
             success(data) {
-                self.DealershipName(data);
+                var name = data;
+                self.DealershipName = name;
             }
 
         })
     };
-};*/
+
+    
+    /*(function () {
+        if (self.ViewVehicleClicked()) {
+            window.location.href = '/Vehicles/Details/' + self.Id;
+        }
+        if (self.ViewDealershipClicked()) {
+            window.location.href = '/Dealerships/Details/' + self.DealershipId;
+        }
+    });
+    */
+    
+    self.ViewVehiclePage = function () {
+        window.location.href = '/Vehicles/Details/' + self.Id;
+    }
+
+    self.ViewDealershipPage = function () {
+        window.location.href = '/Dealerships/Details/' + self.DealershipId;
+    }
+    
 };
 
 function FilterSearchViewModel() {
@@ -40,6 +76,7 @@ function FilterSearchViewModel() {
         self.LoadData();
     });
 
+    
 
     //get model types for user selected make
     self.LoadData = function () {
@@ -49,7 +86,7 @@ function FilterSearchViewModel() {
             success: function (data) {
                 for (var i = 0; i < data.length; i++) {
                     //after retirieving initial results for page, add the items to the Vehicles Array to be rendered to the screen on load
-                    self.Vehicles.push(new VehicleViewModel(data[i].Id, data[i].Make, data[i].Model, data[i].Year, data[i].Style, data[i].Price, data[i].Mileage, data[i].ExteriorColor, data[i].CylinderNumber, data[i].Transmission, data[i].Condition, data[i].ImageBytes));
+                    self.Vehicles.push(new VehicleViewModel(data[i].Id, data[i].Make, data[i].Model, data[i].Year, data[i].Style, data[i].Price, data[i].Mileage, data[i].ExteriorColor, data[i].CylinderNumber, data[i].Transmission, data[i].Condition, data[i].ImageBytes, data[i].DealershipIdNumber, data[i].DealershipName));
                 }
             }
         })
@@ -115,9 +152,8 @@ function FilterSearchViewModel() {
 
 
     self.ModelChoices = ko.observableArray([]);
-    
         
-
+    self.ErrorMessage = ko.observable("");
 
     //send all search criteria data to server to retreive matching results
     self.SendSearch = function () {
@@ -207,9 +243,14 @@ function FilterSearchViewModel() {
                 for (var i = 0; i < data.length; ++i) {
                     //after retrieving matching vehicles from server, replace the current rendered list of vehicles with the list of matching vehicles returned from the search
                     //every instance of a matched vehicle is initialized with a new VehicleViewModel to obtain all vehicle info
-                    self.Vehicles.push(new VehicleViewModel(data[i].Id, data[i].Make, data[i].Model, data[i].Year, data[i].Style, data[i].Price, data[i].Mileage, data[i].ExteriorColor, data[i].CylinderNumber, data[i].Transmission, data[i].Condition));
+                    self.Vehicles.push(new VehicleViewModel(data[i].Id, data[i].Make, data[i].Model, data[i].Year, data[i].Style, data[i].Price, data[i].Mileage, data[i].ExteriorColor, data[i].CylinderNumber, data[i].Transmission, data[i].Condition, data[i].ImageBytes, data[i].DealershipIdNumber, data[i].DealershipName));
                 }
                
+                if (data.length < 1) {
+                    self.ErrorMessage("Your search did not return any results. Please try changing your search criteria.")
+                } else {
+                    self.ErrorMessage("");
+                }
         }
     });
 }

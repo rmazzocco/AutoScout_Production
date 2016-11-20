@@ -20,16 +20,23 @@ namespace AutoScout.Models
         public string Condition { get; set; }
         public int CylinderNumber { get; set; }
         public string ExteriorColor { get; set; }
-        public byte[] ImageBytes { get; set; }
+        public string ImageBytes { get; set; }
+        public int DealershipIdNumber { get; set; }
+        public string DealershipName { get; set; }
 
         public VehicleSearchCriteriaViewModel()
         {
             var db = new AutoScoutDBContext();
-            var imagebytes = db.VehicleImages.FirstOrDefault(x => x.VehicleId == Id).ImageBytes;
-            ImageBytes = imagebytes;
+            var imageBytes = db.VehicleImages.FirstOrDefault(x => x.VehicleId == Id).ImageBytes;
+
+            //convert image byte array to base64 string to be rendered properly in browser
+            var imageBytesBase64String = Convert.ToBase64String(imageBytes);
+            ImageBytes = imageBytesBase64String;
+
+            
         }
 
-        public VehicleSearchCriteriaViewModel(int id, string make, string model, int year, decimal price, int mileage, string transmission, string style, string condition, int cylinderNumber, string exteriorColor)
+        public VehicleSearchCriteriaViewModel(int id, string make, string model, int year, decimal price, int mileage, string transmission, string style, string condition, int cylinderNumber, string exteriorColor, int dealershipIdNumber, string dealershipName)
         {
             Id = id;
             Make = make;
@@ -42,11 +49,18 @@ namespace AutoScout.Models
             Condition = condition;
             CylinderNumber = cylinderNumber;
             ExteriorColor = exteriorColor;
+            DealershipIdNumber = dealershipIdNumber;
+            DealershipName = dealershipName;
 
             var db = new AutoScoutDBContext();
-            var imagebytes = db.VehicleImages.FirstOrDefault(x => x.VehicleId == Id).ImageBytes;
-            ImageBytes = imagebytes;
+            var imageBytes = db.VehicleImages.FirstOrDefault(x => x.VehicleId == Id).ImageBytes;
+            
 
+            //convert image byte array to base64 string to be rendered properly in browser
+            var imageBytesBase64String = Convert.ToBase64String(imageBytes);
+            ImageBytes = imageBytesBase64String;
+
+            
         }
 
     }

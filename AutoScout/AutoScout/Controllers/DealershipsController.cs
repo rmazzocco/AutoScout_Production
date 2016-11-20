@@ -24,8 +24,10 @@ namespace AutoScout.Controllers
         {
             try
             {
-                var dealerships = db.Dealerships.Include(d => d.AutoScoutIdentityUser);
-                return View(await dealerships.ToListAsync());
+                var dealershipService = new DealershipAccountService(db);
+                var dealershipId = dealershipService.GetCurrentUserDealershipIdFromIdentity();
+                Dealership dealership = await db.Dealerships.FindAsync(dealershipId);
+                return View(dealership);
             }
             catch (Exception ex)
             {
@@ -154,7 +156,36 @@ namespace AutoScout.Controllers
 
         //Post - set images for dealership profile's header image and icon
         [HttpPost]
-        public async Task<ActionResult> SetProfileImages(HttpPostedFileBase headerImageFile, HttpPostedFileBase iconImageFile)
+        public ActionResult SetProfileImages(HttpPostedFileBase headerImageFile, HttpPostedFileBase iconImageFile)
+        {
+            try
+            {
+                //get the dealer id from dealership account service
+                var dealershipService = new DealershipAccountService(db);
+                var imageService = new ImageManagementService(db);
+                var currentDealerId = dealershipService.GetCurrentUserDealershipIdFromIdentity();
+
+                //add images to Dealership table using image service
+                var dealership = db.Dealerships.FirstOrDefault(x => x.Id == currentDealerId);
+                if (dealership != null)
+                {
+                    imageService.AssignProfileImagesToDealership(currentDealerId, headerImageFile, iconImageFile);
+                }
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public void EditImages(HttpPostedFileBase headerImageFile, HttpPostedFileBase iconImageFile)
         {
             try
             {
@@ -163,14 +194,12 @@ namespace AutoScout.Controllers
                 var currentDealerId = dealershipService.GetCurrentUserDealershipIdFromIdentity();
 
                 //add images to Dealership table using image service
-                var dealership = await db.Dealerships.FirstOrDefaultAsync(x => x.Id == currentDealerId);
+                var dealership = db.Dealerships.FirstOrDefault(x => x.Id == currentDealerId);
                 if (dealership != null)
                 {
                     var imageService = new ImageManagementService(db);
                     imageService.AssignProfileImagesToDealership(currentDealerId, headerImageFile, iconImageFile);
                 }
-
-                return View("ManageProfile", dealership);
             }
             catch (Exception ex)
             {
@@ -199,18 +228,9 @@ namespace AutoScout.Controllers
                     State = dealership.State,
                     ZipCode = dealership.ZipCode,
                     Notes = dealership.Notes,
-                    PhoneNumber = dealership.PhoneNumber
+                    PhoneNumber = dealership.PhoneNumber,
+                    FaxNumber = dealership.FaxNumber
                 };
-
-                /*
-                var companyName = dealership.CompanyName;
-                var email = dealership.Email;
-                var city = dealership.City;
-                var state = dealership.State;
-                var zipcode = dealership.ZipCode;
-                var notes = dealership.Notes;
-                var phone = dealership.PhoneNumber;
-                */
 
                 return Json(dealershipEditManager, JsonRequestBehavior.AllowGet);
 
@@ -222,6 +242,26 @@ namespace AutoScout.Controllers
 
                 throw (ex);
             }
+        }
+
+        //Save changes to Dealership info
+        [Authorize]
+        [HttpPost]
+        public void EditDetails(int id, string companyName, string email, string city, string state, string zipCode, string phoneNumber, string faxNumber, string notes)
+        {
+            try
+            {
+                var dealershipService = new DealershipAccountService(db);
+                dealershipService.SaveDealershipDetails(id, companyName, email, city, state, zipCode, phoneNumber, faxNumber, notes);
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+           
         }
 
         //Edit dealership info - using knockout

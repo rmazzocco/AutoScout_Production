@@ -102,7 +102,7 @@
     </div>
     <!-- List of Search Results items -->
     <div class="col-md-10">
-        <div class="panel panel-info">
+        <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">Results</h3>
             </div>
@@ -116,22 +116,28 @@
                     <div class="alert alert-danger" role="alert"><p>@ViewBag.ErrorMessage</p></div>
                 }
                 *@
+
+                <!-- List of results matching search criteria - loaded asynchronously -->
                 <!-- ko foreach: Vehicles() -->
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h5><span data-bind="text: Year"> </span><span data-bind="text: Make"></span> <span data-bind="text: Model"></span></h5>
                             </div>
                             <div class="panel-body">
                                 <div style="position:relative; height: 150px">
-                                    <img id="previewImage" data-bind="attr: { src : PreviewImage }" class="img-rounded img-responsive img-thumbnail center-block" style="max-height: 150px" />
+                                    <img id="previewImage" data-bind="attr: { src: PreviewImage }" class="img-rounded img-responsive img-thumbnail center-block" style="max-height: 150px" alt="VehicleImage" />
                                 </div>
                                 <h5 class="price"><span data-bind="text: Price"></span></h5>
+                                <div class="btn-group-vertical btn-group-xs center-block" role="group" aria-label="">
+                                    <button id="detailsButton" data-bind="click: ViewVehiclePage" type="button" class="btn btn-default"><span class="glyphicon glyphicon-info-sign"></span> Vehicle Details</button>
+                                    <button type="button" data-bind="click: ViewDealershipPage" class="btn btn-default"><span class="glyphicon glyphicon-user"></span><span data-bind="text: DealershipName"></span></button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 <!-- /ko -->    
-                
+                <h5 data-bind="text: ErrorMessage"></h5>
                 </div>
             </div>
         </div>
