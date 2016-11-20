@@ -75,12 +75,21 @@ namespace AutoScout.Controllers
                     string year = vehicle.Year.ToString();
                     string item = year + " " + make + " " + model;
                     ViewBag.stringDescription = item;
+
                 }
                 if (vehicle == null)
                 {
                     return HttpNotFound();
                 }
-                ViewBag.Images = db.VehicleImages.Where(x => x.VehicleId == id).ToList();
+                var imageBase64Strings = GetVehicleImagesBase64String(vehicle.Id);
+
+                ViewBag.DealershipPhoneNumber = db.Dealerships.FirstOrDefault(x => x.Id == vehicle.DealershipId).PhoneNumber;
+                ViewBag.DealershipName = db.Dealerships.FirstOrDefault(x => x.Id == vehicle.DealershipId).CompanyName;
+                ViewBag.ImageBase64Strings = imageBase64Strings;
+                ViewBag.DealershipCity = db.Dealerships.FirstOrDefault(x => x.Id == vehicle.DealershipId).City;
+                ViewBag.DealershipState = db.Dealerships.FirstOrDefault(x => x.Id == vehicle.DealershipId).State;
+                ViewBag.DealershipZipCode = db.Dealerships.FirstOrDefault(x => x.Id == vehicle.DealershipId).ZipCode;
+                ViewBag.DealershipEmail = db.Dealerships.FirstOrDefault(x => x.Id == vehicle.DealershipId).Email;
 
                 return View(vehicle);
             }
@@ -443,6 +452,20 @@ namespace AutoScout.Controllers
 
                 throw (ex);
             }
+        }
+
+        [HttpGet]
+        public IEnumerable<string> GetVehicleImagesBase64String(int id)
+        {
+            var imageService = new ImageManagementService(db);
+            var imageList = imageService.GetImagesConvertedToBase64Strings(id);
+            /*var imageListJson = new List<ImageRenderViewModel>();
+            foreach (var item in imageList)
+            {
+                imageListJson.Add(new ImageRenderViewModel(item));
+            }
+            return Json(imageListJson, JsonRequestBehavior.AllowGet);*/
+            return imageList;
         }
 
         public ActionResult ListItem(Vehicle vehicle)

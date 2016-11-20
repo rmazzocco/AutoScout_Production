@@ -18,7 +18,7 @@
     
     <!--Filter Search Panel-->
     <div class="col-md-2">
-        <div class="panel panel-primary">
+        <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Filter Search</h3>
             </div>
@@ -95,32 +95,22 @@
                 </form>
             </div>
             <div id="testSearchService">
-                <!--<p data-bind="text: Make"></p>-->
                 <button data-bind="click: SendSearch">Search Inventory</button>
             </div>
         </div>
     </div>
-    <!-- List of Search Results items -->
+    <!-- Search Results items -->
     <div class="col-md-10">
-        <div class="panel panel-primary">
+        <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Results</h3>
             </div>
             <div class="panel-body">
-                @*@foreach (var item in vehiclesMatchingSearch)
-                {
-                    @Html.Partial("ShortcutListItem", item)
-                }
-                @if (error != null)
-                {
-                    <div class="alert alert-danger" role="alert"><p>@ViewBag.ErrorMessage</p></div>
-                }
-                *@
 
                 <!-- List of results matching search criteria - loaded asynchronously -->
                 <!-- ko foreach: Vehicles() -->
                     <div class="col-md-4">
-                        <div class="panel panel-default">
+                        <div class="panel panel-primary">
                             <div class="panel-heading">
                                 <h5><span data-bind="text: Year"> </span><span data-bind="text: Make"></span> <span data-bind="text: Model"></span></h5>
                             </div>

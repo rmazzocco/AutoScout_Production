@@ -1,144 +1,153 @@
 ﻿@model AutoScout.Models.Vehicle
-
+@using AutoScout.Controllers;
 @{
     ViewBag.Title = "Details";
-    var images = ViewBag.Images;
+
+    var vehiclesController = new VehiclesController();
+    var imageBase64Strings = vehiclesController.GetVehicleImagesBase64String(Model.Id).ToArray();
+
+    var dealershipName = ViewBag.DealershipName;
+    var dealershipPhoneNumber = ViewBag.DealershipPhoneNumber;
+    var dealershipCity = ViewBag.DealershipCity;
+    var dealershipState = ViewBag.DealershipState;
+    var dealershipZipCode = ViewBag.DealershipZipCode;
+    var dealershipEmail = ViewBag.DealershipEmail;
 }
 
-<h2>Details</h2>
 
-<div>
+
+<div class="container-fluid">
+
+    <h2>Details</h2>
     <h4>@ViewBag.stringDescription</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Dealership.CompanyName)
-        </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Dealership.CompanyName)
-        </dd>
+    <div class="row">
+        <!-- Carousel of current vehicle images -->
+        <div class="col-md-8">
+            <div id="carousel-generic" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                    @for (var i = 0; i < imageBase64Strings.Count(); ++i)
+                    {
+                        
+                        var activeClass = "active";
+                        if (i > 0)
+                        {
+                            activeClass = "";
+                        }
+                        <li data-target="#carousel-generic" data-slide-to="@i" class="@activeClass"></li>
+                    }
+                    
+                </ol>
+                <div class="carousel-inner" role="listbox">
 
-        <dt>
-            @Html.DisplayNameFor(model => model.VIN)
-        </dt>
+                    @for (var i = 0; i < imageBase64Strings.Count(); ++i)
+                    {
+                        var itemNumber = i + 1;
+                        var activeClass = "active";
+                        if (i > 0)
+                        {
+                            activeClass = "";
+                        }
+                        <div class="item @activeClass ">
+                            <img src="data:image/png;base64,@imageBase64Strings[i]" alt="slide @itemNumber">
+                        </div>
+                    }
+                </div>
+                <a class="left carousel-control" href="#carousel-generic" role="button" data-slide="prev">
+                    <span class="icon-prev" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="right carousel-control" href="#carousel-generic" role="button" data-slide="next">
+                    <span class="icon-next" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+            <br />
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    @dealershipName
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <h5><strong>Phone Number</strong></h5> <h5>@dealershipPhoneNumber</h5>
+                    </li>
 
-        <dd>
-            @Html.DisplayFor(model => model.VIN)
-        </dd>
+                    <li class="list-group-item">
+                        <h5><strong>Email</strong></h5> <h5>@dealershipEmail</h5>
+                    </li>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Mileage)
-        </dt>
+                    <li class="list-group-item">
+                        <h5><strong>Location</strong></h5> <h5>@dealershipCity, @dealershipState @dealershipZipCode</h5>
+                    </li>
 
-        <dd>
-            @Html.DisplayFor(model => model.Mileage)
-        </dd>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- List of current vehicle detailed info -->
+            <div class="panel panel-default">
+                <div class="panel-heading">@ViewBag.stringDescription</div>
+                <div class="panel-body">
+                    <h5 class="price"><strong>Price</strong></h5> <h5 class="price">$@Html.DisplayFor(model => model.Price)</h5>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <h5><strong>VIN</strong></h5> <h5>@Model.VIN</h5>
+                    </li>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ExteriorColor)
-        </dt>
+                    <li class="list-group-item">
+                        <h5><strong>Mileage</strong></h5> <h5>@Model.Mileage</h5>
+                    </li>
 
-        <dd>
-            @Html.DisplayFor(model => model.ExteriorColor)
-        </dd>
+                    <li class="list-group-item">
+                        <h5><strong>Transmission</strong></h5> <h5>@Model.Transmission</h5>
+                    </li>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.InteriorColor)
-        </dt>
+                    <li class="list-group-item">
+                        <h5><strong>Exterior Color</strong></h5> <h5>@Model.ExteriorColor</h5>
+                    </li>
 
-        <dd>
-            @Html.DisplayFor(model => model.InteriorColor)
-        </dd>
+                    <li class="list-group-item">
+                        <h5><strong>Interior Color</strong></h5> <h5>@Model.InteriorColor</h5>
+                    </li>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Make)
-        </dt>
+                    <li class="list-group-item">
+                        <h5><strong>Style</strong></h5> <h5>@Model.Style</h5>
+                    </li>
 
-        <dd>
-            @Html.DisplayFor(model => model.Make)
-        </dd>
+                    <li class="list-group-item">
+                        <h5><strong>Condition</strong></h5> <h5>@Model.Condition</h5>
+                    </li>
+                    <li class="list-group-item">
+                        <h5><strong>Cylinders</strong></h5> <h5>@Model.CylinderNumber</h5>
+                    </li>
+                   
+                </ul>
+               
+            </div>
+        </div>
+    </div>
+   
+    <br />
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Model)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Model)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Year)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Year)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Transmission)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Transmission)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Style)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Style)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Condition)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Condition)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.CylinderNumber)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.CylinderNumber)
-        </dd>
-
-    </dl>
-</div>
-<div>
-    <h4>Images</h4>
-    <hr />
-    <table>
-        <tr>
-            <td>
-                @foreach (var item in ViewBag.Images)
-                {
-
-                    var base64 = Convert.ToBase64String(item.ImageBytes);
-                    var imgSrc = string.Format("data:image/png;base64,{0}", base64);
-
-                    <img src="@imgSrc" style="max-width:200px;" />
-                }
-            </td>
-        </tr>
-    </table>
 
 </div>
+
 <br />
 <br />
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
+
+@*  <script type="text/javascript">
+        function VehicleImageViewModel(imageBytes) {
+
+        }
+        function VehicleItemViewModel() {
+
+        }
+        ko.applyBindings(VehicleItemViewModel);
+    </script>*@

@@ -48,6 +48,7 @@ namespace AutoScout.Services
             }
         }
 
+        //Assign uploaded images to dealership profile header and icon
         public void AssignProfileImagesToDealership(int dealershipId, HttpPostedFileBase headerImageFile, HttpPostedFileBase iconImageFile)
         {
             try
@@ -90,6 +91,22 @@ namespace AutoScout.Services
 
                 throw (ex);
             }
+        }
+
+        //Acquire string of base 64 strings, to pull vehicle images from the db to the view to be rendered in the browser
+        public IEnumerable<string> GetImagesConvertedToBase64Strings(int id)
+        {
+            var result = new List<string>();
+
+            var vehicleImages = db.VehicleImages.Where(x => x.VehicleId == id).ToList();
+            foreach(var item in vehicleImages)
+            {
+                var imageBytes = item.ImageBytes;
+                var imageBytesBase64String = Convert.ToBase64String(imageBytes);
+                result.Add(imageBytesBase64String);
+            }
+
+            return result;
         }
     }
 }
