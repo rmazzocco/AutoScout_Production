@@ -111,5 +111,46 @@ namespace AutoScout.Services
                 throw (ex);
             }
         }
+
+        public IEnumerable<Vehicle> GetAllVehiclesInInventory(int id)
+        {
+            try
+            {
+                var inventoryVehicles = db.Vehicles.Where(x => x.DealershipId == id).ToList();
+                return inventoryVehicles;
+            } 
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+           
+        }
+
+        public void DeleteVehicleFromInventory(int vehicleId, int dealershipId)
+        {
+            try
+            {
+                var ownerOfVehicleId = db.Vehicles.FirstOrDefault(x => x.Id == vehicleId).DealershipId;
+                var currentUserId = GetCurrentUserDealershipIdFromIdentity();
+                if(ownerOfVehicleId == currentUserId)
+                {
+                    var vehicle = db.Vehicles.FirstOrDefault(x => x.Id == vehicleId);
+                    db.Vehicles.Remove(vehicle);
+                    db.SaveChanges();
+                    
+                }
+                return;
+            } catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+
     }
 }

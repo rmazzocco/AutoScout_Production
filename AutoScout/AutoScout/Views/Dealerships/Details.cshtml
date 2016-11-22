@@ -2,13 +2,20 @@
 
 @{
     ViewBag.Title = "Details";
+    
 }
 
-<h2>Details</h2>
-
-<div>
-    <h4>Dealership</h4>
+<div class="container-fluid">
+    <div class="fb-profile">
+        <img align="left" class="fb-image-lg" src="@ViewBag.Background" alt="Profile image example" />
+        <img align="left" class="fb-image-profile thumbnail thumbnail" src="@ViewBag.Icon" alt="Profile image example" />
+        <div class="fb-profile-text">
+            <h1 data-bind="text: CompanyName"></h1>
+        </div>
+    </div> 
     <hr />
+    
+    @*
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.AutoScoutIdentityUser.Email)
@@ -73,9 +80,197 @@
         <dd>
             @Html.DisplayFor(model => model.PhoneNumber)
         </dd>
-    </dl>
-</div>
+    </dl>*@
+    
+        <div class="row">
+            <div class="col-md-9">
+               <div class="panel panel-default">
+                   <div class="panel-heading"><span class="glyphicon glyphicon-user"></span> Bio</div>
+                   <div class="panel-body">
+                       <p data-bind="text: Notes"></p>
+                   </div>
+               </div>
+               <div class="panel panel-default">
+                    <div class="panel-heading"><span class="glyphicon glyphicon-th"></span> Inventory</div>
+                    <div class="panel-body">
+                        <!-- List of results matching search criteria - loaded asynchronously -->
+                        <!-- ko foreach: Vehicles() -->
+                        <div class="col-md-4">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <h5><span data-bind="text: Year"> </span><span data-bind="text: Make"></span> <span data-bind="text: Model"></span></h5>
+                                </div>
+                                <div class="panel-body">
+                                    <div style="position:relative; height: 150px">
+                                        <img id="previewImage" data-bind="attr: { src: PreviewImage }" class="img-rounded img-responsive img-thumbnail center-block" style="max-height: 150px" alt="VehicleImage" />
+                                    </div>
+                                    <h5 class="price"><span data-bind="text: Price"></span></h5>
+                                    <div class="btn-group-vertical btn-group-xs center-block" role="group" aria-label="">
+                                        <button id="detailsButton" data-bind="click: ViewVehiclePage" type="button" class="btn btn-default"><span class="glyphicon glyphicon-info-sign"></span> Vehicle Details</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /ko -->    
+                    </div>
+               </div>
+            </div>
+            <div class="col-md-3">
+                
+                <div class="panel panel-default">
+                    <div class="panel-heading"><span class="glyphicon glyphicon-earphone"></span> Contact Info</div>
+
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <h5><strong>Phone Number</strong></h5> <h5 data-bind="text: PhoneNumber"></h5>
+                        </li>
+
+                        <li class="list-group-item">
+                            <h5><strong>Fax Number</strong></h5> <h5 data-bind="text: FaxNumber"></h5>
+                        </li>
+                        <li class="list-group-item">
+                            <h5><strong>Email</strong></h5> <h5 data-bind="text: Email"></h5>
+                        </li>
+
+                    </ul>
+
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading"><span class="glyphicon glyphicon-globe"></span> Location</div>
+
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <h5><strong>City</strong></h5> <h5 data-bind="text: City"></h5>
+                        </li>
+
+                        <li class="list-group-item">
+                            <h5><strong>State</strong></h5> <h5 data-bind="text: State"></h5>
+                        </li>
+                        <li class="list-group-item">
+                            <h5><strong>ZipCode</strong></h5> <h5 data-bind="text: ZipCode"></h5>
+                        </li>
+
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @*@Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")*@
 </p>
+<script>
+
+    function InventoryVehicleViewModel(id, make, model, year, style, price, mileage, exteriorColor, cylinderCount, transmission, condition, imageBytes, dealershipId, dealershipName) {
+        var self = this;
+        self.Id = id;
+        self.Make = make;
+        self.Model = model;
+        self.Year = year + " ";
+        self.Style = style;
+        self.Price = "$" + price + ".00";
+        self.Mileage = mileage;
+        self.ExteriorColor = exteriorColor;
+        self.CylinderCount = cylinderCount;
+        self.Transmission = transmission;
+        self.Condition = condition;
+        self.ImageBytes = imageBytes;
+        self.PreviewImage = "data:image/png;base64," + imageBytes;
+        self.DealershipName = " " + dealershipName;
+        self.DealershipId = dealershipId;
+
+        self.ViewVehiclePage = function () {
+            window.location.href = "@Url.Action("Details", "Vehicles")/" + self.Id;
+        }
+
+    };
+
+    function DealershipProfileViewModel() {
+        var self = this;
+        self.Test = "Test worked";
+
+        self.Id = ko.observable("");
+        self.CompanyName = ko.observable("");
+        self.Email = ko.observable("");
+        self.City = ko.observable("");
+        self.State = ko.observable("");
+        self.ZipCode = ko.observable("");
+        self.PhoneNumber = ko.observable("");
+        self.FaxNumber = ko.observable("");
+        self.Notes = ko.observable("");
+
+        self.Vehicles = ko.observableArray([]);
+
+        @*
+        self.IconBase64String = ko.observable("");
+        self.BackgroundBase64String = ko.observable("");
+
+        self.Icon = "data:image/png;base64," + self.IconBase64String();
+        self.Background = "data:image/png;base64," + self.BackgroundBase64String();
+        *@
+
+
+        $(document).ready(function () {
+
+           LoadAllInfo();
+        });
+
+
+        self.LoadAllInfo = function () {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetCurrentDealershipInfo", "Dealerships")",
+                success: function (data) {
+                    self.Id(data.Id);
+                    self.CompanyName(data.CompanyName);
+                    self.Email(data.Email);
+                    self.City(data.City);
+                    self.State(data.State);
+                    self.ZipCode(data.ZipCode);
+                    self.PhoneNumber(data.PhoneNumber);
+                    self.FaxNumber(data.FaxNumber);
+                    self.Notes(data.Notes);
+                }
+            });
+            self.LoadVehicles();
+        };
+
+        self.LoadVehicles = function () {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetAllVehicles", "Dealerships", new { id = Model.Id })",
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        //after retirieving initial results for page, add the items to the Vehicles Array to be rendered to the screen on load
+                        self.Vehicles.push(new InventoryVehicleViewModel(data[i].Id, data[i].Make, data[i].Model, data[i].Year, data[i].Style, data[i].Price, data[i].Mileage, data[i].ExteriorColor, data[i].CylinderNumber, data[i].Transmission, data[i].Condition, data[i].ImageBytes, data[i].DealershipIdNumber, data[i].DealershipName));
+                    }
+                }
+            })
+        };
+
+        @*self.LoadBackgroundImage = function () {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetProfileBackgroundImage", "Dealerships", new { id = Model.Id })",
+                success: function (data) {
+                    self.BackgroundBase64String(data.Base64String);
+                }
+            });
+        };
+
+        self.LoadIconImage = function () {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetProfileIconImage", "Dealerships", new { id = Model.Id })",
+                success: function (data) {
+                    var string = data;
+                    self.IconBase64String(string);
+                }
+            });
+        };*@
+    };
+    ko.applyBindings(DealershipProfileViewModel);
+</script>

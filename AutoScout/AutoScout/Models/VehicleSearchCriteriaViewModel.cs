@@ -29,11 +29,12 @@ namespace AutoScout.Models
             var db = new AutoScoutDBContext();
             var imageBytes = db.VehicleImages.FirstOrDefault(x => x.VehicleId == Id).ImageBytes;
 
-            //convert image byte array to base64 string to be rendered properly in browser
-            var imageBytesBase64String = Convert.ToBase64String(imageBytes);
-            ImageBytes = imageBytesBase64String;
-
-            
+            if(imageBytes != null)
+            {
+                //convert image byte array to base64 string to be rendered properly in browser
+                var imageBytesBase64String = Convert.ToBase64String(imageBytes);
+                ImageBytes = imageBytesBase64String;
+            }
         }
 
         public VehicleSearchCriteriaViewModel(int id, string make, string model, int year, decimal price, int mileage, string transmission, string style, string condition, int cylinderNumber, string exteriorColor, int dealershipIdNumber, string dealershipName)
@@ -54,13 +55,12 @@ namespace AutoScout.Models
 
             var db = new AutoScoutDBContext();
             var imageBytes = db.VehicleImages.FirstOrDefault(x => x.VehicleId == Id).ImageBytes;
-            
-
-            //convert image byte array to base64 string to be rendered properly in browser
-            var imageBytesBase64String = Convert.ToBase64String(imageBytes);
-            ImageBytes = imageBytesBase64String;
-
-            
+            if (imageBytes != null)
+            {
+                //convert image byte array to base64 string to be rendered properly in browser
+                var imageBytesBase64String = Convert.ToBase64String(imageBytes);
+                ImageBytes = imageBytesBase64String;
+            }
         }
 
     }

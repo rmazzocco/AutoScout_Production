@@ -126,12 +126,6 @@ namespace AutoScout.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,VIN,Mileage,ExteriorColor,InteriorColor,Make,Model,Year,Price,Transmission,Style,Condition,CylinderNumber,TransmissionType")] Vehicle vehicle)
         {
-            /*
-            var dealershipService = new DealershipAccountService(db);
-            var dealershipId = dealershipService.GetCurrentUserDealershipIdFromIdentity();
-            vehicle.DealershipId = dealershipId;
-            vehicle.DateCreated = DateTime.Now.ToUniversalTime();
-            */
             try
             {
                 if (ModelState.IsValid)
@@ -215,28 +209,28 @@ namespace AutoScout.Controllers
         }
 
         // GET: Vehicles/Delete/5
-        public ActionResult Delete(int? id)
+        public void Delete(int? id)
         {
             try
             {
-                if (id == null)
+                if (id != null)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    Vehicle vehicle = db.Vehicles.Find(id);
+                    if (vehicle != null)
+                    {
+                        string make = vehicle.Make;
+                        string model = vehicle.Model;
+                        string year = vehicle.Year.ToString();
+                        string item = year + " " + make + " " + model;
+                        ViewBag.stringDescription = item;
+
+                        var dealershipService = new DealershipAccountService(db);
+                        var currentDealerId = dealershipService.GetCurrentUserDealershipIdFromIdentity();
+                        dealershipService.DeleteVehicleFromInventory(vehicle.Id, currentDealerId);
+
+
+                    }
                 }
-                Vehicle vehicle = db.Vehicles.Find(id);
-                if (vehicle != null)
-                {
-                    string make = vehicle.Make;
-                    string model = vehicle.Model;
-                    string year = vehicle.Year.ToString();
-                    string item = year + " " + make + " " + model;
-                    ViewBag.stringDescription = item;
-                }
-                if (vehicle == null)
-                {
-                    return HttpNotFound();
-                }
-                return View(vehicle);
             }
             catch (Exception ex)
             {

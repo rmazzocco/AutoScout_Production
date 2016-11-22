@@ -11,16 +11,24 @@
 
     var vehiclesMatchingSearch = Model.ToList();
 }
+
+
 <div class="row">
     <div class="padding col-md-12"></div>
 </div>
+<h1>Filter Search Inventory</h1>
+<hr />
+
 <div class="row">
-    
+    @*<div class="col-md-12">
+        <img id="search-banner" src="~/Content/images/home-banner-cars.png" alt="search-banner" />
+    </div>*@
+
     <!--Filter Search Panel-->
     <div class="col-md-2">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Filter Search</h3>
+                <h3 class="panel-title"><span class="glyphicon glyphicon-plus"></span> Filters</h3>
             </div>
             <div class="panel-body">
                 <label>Choose your search criteria to find a vehicle that meets your needs:</label>
@@ -89,13 +97,14 @@
                     </div>
                     <div class="form-group">
                         <input class="pad-right-10" type="checkbox" name="cylinderCheckBox" data-bind="checked: useCylinderField, value: CylinderCount" />
-                        <label for="selectCondition">Engine Cylinders</label>
+                        <label for="selectCondition">Cylinders</label>
                         <select class="form-control select-small-text" id="selectCondition" data-bind="visible: useCylinderField, options: CylinderChoices, optionsText: 'description', value: CylinderCount, optionsValue: 'description'"></select>
                     </div>
                 </form>
             </div>
-            <div id="testSearchService">
-                <button data-bind="click: SendSearch">Search Inventory</button>
+            
+            <div class="btn-group-vertical btn-group-xs center-block" role="group" aria-label="">
+                <button id="searchButton" data-bind="click: SendSearch" type="button" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> Search</button>
             </div>
         </div>
     </div>
@@ -103,7 +112,7 @@
     <div class="col-md-10">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Results</h3>
+                <h3 class="panel-title"><span class="glyphicon glyphicon-th"></span> Results</h3>
             </div>
             <div class="panel-body">
 

@@ -71,5 +71,73 @@ textarea {
     height: 200px;
 }
 
+body
+{
+    font-family: 'Open Sans', sans-serif;
+}
 
+/*.fb-profile {
+    height: 300px;
+    overflow: hidden;
+}*/
 
+.fb-profile img.fb-image-lg{
+    /*position: relative;
+    bottom: 220px;*/
+    
+    z-index: 0;
+    width: 100%; 
+    margin-bottom: 10px;
+
+    
+}
+
+.fb-image-profile
+{
+    margin: -90px 10px 0px 50px;
+    z-index: 9;
+    width: 20%; 
+}
+
+@media (max-width:768px)
+{
+    
+.fb-profile-text>h1{
+    font-weight: 700;
+    font-size:16px;
+}
+
+.fb-image-profile
+{
+    margin: -45px 10px 0px 25px;
+    z-index: 9;
+    width: 20%; 
+}
+}
+
+.portrait-crop{
+    display: inline-block;
+    height: 215px;
+    width: 50%;
+    overflow: hidden;
+}
+
+.portrait-crop img{
+    width: 100%;
+}
+
+#search-banner {
+    
+    
+    width: 100%;
+    margin-bottom: 20px;
+    
+}
+
+.equal-width-cell {
+    width: calc(100% / 5);
+}
+
+.width-100{
+    width:100%;
+}

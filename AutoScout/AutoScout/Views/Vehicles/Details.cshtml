@@ -4,6 +4,7 @@
     ViewBag.Title = "Details";
 
     var vehiclesController = new VehiclesController();
+    //will return a list an array of the image byte arrays formatted to base64 strings to be rendered as images in the browser
     var imageBase64Strings = vehiclesController.GetVehicleImagesBase64String(Model.Id).ToArray();
 
     var dealershipName = ViewBag.DealershipName;
@@ -27,9 +28,9 @@
         <div class="col-md-8">
             <div id="carousel-generic" class="carousel slide" data-ride="carousel">
                 <ol class="carousel-indicators">
+                    @* Using the array of images for the vehicle, populate the carousel buttons *@
                     @for (var i = 0; i < imageBase64Strings.Count(); ++i)
                     {
-                        
                         var activeClass = "active";
                         if (i > 0)
                         {
@@ -40,7 +41,7 @@
                     
                 </ol>
                 <div class="carousel-inner" role="listbox">
-
+                    @* Using the array of images for the vehicle, dynamically populate the carousel image items*@
                     @for (var i = 0; i < imageBase64Strings.Count(); ++i)
                     {
                         var itemNumber = i + 1;
@@ -80,12 +81,16 @@
                     <li class="list-group-item">
                         <h5><strong>Location</strong></h5> <h5>@dealershipCity, @dealershipState @dealershipZipCode</h5>
                     </li>
-
                 </ul>
             </div>
+            
         </div>
         
         <div class="col-md-4">
+            <div>
+                <button type="button" data-bind="click: RedirectToDealership" class="btn btn-default width-100"><span class="glyphicon glyphicon-user"></span> View Dealership Page</button>
+            </div>
+            <br />
             <!-- List of current vehicle detailed info -->
             <div class="panel panel-default">
                 <div class="panel-heading">@ViewBag.stringDescription</div>
@@ -142,12 +147,14 @@
     @Html.ActionLink("Back to List", "Index")
 </p>
 
-@*  <script type="text/javascript">
-        function VehicleImageViewModel(imageBytes) {
+<script type="text/javascript">
 
-        }
         function VehicleItemViewModel() {
+            var self = this;
 
+            self.RedirectToDealership = function () {
+                window.location.href = '@Url.Action("Details", "Dealerships", new { id = Model.DealershipId })';
+            }
         }
         ko.applyBindings(VehicleItemViewModel);
-    </script>*@
+    </script>

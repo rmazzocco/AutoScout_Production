@@ -52,6 +52,34 @@ namespace AutoScout.Controllers
                 {
                     return HttpNotFound();
                 }
+                //use the image management service to get the background image converted to a base 64 string
+                var imageService = new ImageManagementService(db);
+
+                var iconString = "";
+                var backgroundString = "";
+
+                if (dealership.Icon != null)
+                {
+                    var dealershipIconImage = imageService.GetDealershipProfileIconAsBase64String(dealership.Id);
+                    iconString = "data:image/png;base64," + dealershipIconImage;
+                }
+
+                if(dealership.ProfileBackgroundImage != null)
+                {
+                    var dealershipBackgroundImage = imageService.GetDealershipProfileBackgroundAsBase64String(dealership.Id);
+                    backgroundString = "data:image/png;base64," + dealershipBackgroundImage;
+                }
+
+                //pass image base 64 strings to view using ViewBag
+                ViewBag.Icon = iconString;
+                ViewBag.Background = backgroundString;
+
+                //acquire full vehicle inventory
+                var dealershipService = new DealershipAccountService(db);
+                var vehicles = dealershipService.GetAllVehiclesInInventory(dealership.Id);
+
+                ViewBag.Vehicles = vehicles.ToList();
+
                 return View(dealership);
             }
             catch (Exception ex)
@@ -244,6 +272,82 @@ namespace AutoScout.Controllers
             }
         }
 
+        //Get the base64 string version of the current dealership's background image
+        [Authorize]
+        [HttpGet]
+        public JsonResult GetProfileBackgroundImage(int id)
+        {
+            try
+            {
+                //use the image management service to get the background image converted to a base 64 string
+                var imageService = new ImageManagementService(db);
+                var dealershipBackgroundImage = imageService.GetDealershipProfileBackgroundAsBase64String(id);
+
+                //create a new object easily converted to json to be acquired in the view
+                var background = new ImageRenderViewModel(dealershipBackgroundImage);
+
+                return Json(background, JsonRequestBehavior.AllowGet);
+
+            } 
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+
+        //Get the base64 string version of the current dealership's icon image
+        [Authorize]
+        [HttpGet]
+        public string GetProfileIconImage(int id)
+        {
+            try
+            {
+                //use the image management service to get the background image converted to a base 64 string
+                var imageService = new ImageManagementService(db);
+                var dealershipIconImage = imageService.GetDealershipProfileIconAsBase64String(id);
+
+                //create a new object easily converted to json to be acquired in the view
+                //var icon = new ImageRenderViewModel(dealershipIconImage);
+
+                return dealershipIconImage;
+
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+
+        public JsonResult GetAllVehicles(int id)
+        {
+            try
+            {
+                var dealershipService = new DealershipAccountService(db);
+                var vehicles = dealershipService.GetAllVehiclesInInventory(id).ToList();
+                var vehicleViewModels = new List<VehicleSearchCriteriaViewModel>();
+
+                foreach (var item in vehicles)
+                {
+                    var companyName = db.Dealerships.FirstOrDefault(x => x.Id == id).CompanyName;
+                    vehicleViewModels.Add(new VehicleSearchCriteriaViewModel(item.Id, item.Make, item.Model, item.Year, item.Price, item.Mileage, item.Transmission, item.Style, item.Condition, item.CylinderNumber, item.ExteriorColor, item.DealershipId, companyName));
+                }
+                return Json(vehicleViewModels, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+
         //Save changes to Dealership info
         [Authorize]
         [HttpPost]
@@ -264,68 +368,6 @@ namespace AutoScout.Controllers
            
         }
 
-        //Edit dealership info - using knockout
-        /*[ValidateAntiForgeryToken]
-        [HttpPost]
-        public ActionResult Edit(int id, string companyName, string email, string city, string state, string zipCode, string notes, string phoneNumber, string faxNumber)
-        {
-            try
-            {
-                var currentDealership = db.Dealerships.FirstOrDefault(x => x.Id == id);
-                if (currentDealership != null)
-                {
-                    currentDealership.CompanyName = companyName;
-                    currentDealership.Email = email;
-                    currentDealership.City = city;
-                    currentDealership.State = state;
-                    currentDealership.Notes = notes;
-                    currentDealership.PhoneNumber = phoneNumber;
-                    currentDealership.ZipCode = zipCode;
-                    currentDealership.FaxNumber = faxNumber;
-
-                    db.SaveChanges();
-                }
-                return View(currentDealership);
-            }
-            catch(Exception exception)
-            {
-                throw (exception);
-            }
-            
-        }
-        */
-        
-        /*[ValidateAntiForgeryToken]
-        [HttpPost]
-        public ActionResult Edit(Dealership model)
-        {
-            if(model != null)
-            {
-                var currentDealership = db.Dealerships.FirstOrDefault(x => x.Id == model.Id);
-                if (currentDealership != null)
-                {
-                    currentDealership.CompanyName = model.CompanyName;
-                    currentDealership.Email = model.Email;
-                    currentDealership.City = model.City;
-                    currentDealership.State = model.State;
-                    currentDealership.Notes = model.Notes;
-                    currentDealership.PhoneNumber = model.PhoneNumber;
-                    currentDealership.ZipCode = model.ZipCode;
-                    currentDealership.FaxNumber = model.FaxNumber;
-
-                    db.SaveChanges();
-                }
-
-                return Json("Edits were successfully changed.");
-            }
-            else
-            {
-                return Json("An error has occurred.");
-            }
-            
-        }
-
-    */
         protected override void Dispose(bool disposing)
         {
             if (disposing)

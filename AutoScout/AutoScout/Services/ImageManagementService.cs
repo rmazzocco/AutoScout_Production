@@ -96,17 +96,73 @@ namespace AutoScout.Services
         //Acquire string of base 64 strings, to pull vehicle images from the db to the view to be rendered in the browser
         public IEnumerable<string> GetImagesConvertedToBase64Strings(int id)
         {
-            var result = new List<string>();
-
-            var vehicleImages = db.VehicleImages.Where(x => x.VehicleId == id).ToList();
-            foreach(var item in vehicleImages)
+            try
             {
-                var imageBytes = item.ImageBytes;
-                var imageBytesBase64String = Convert.ToBase64String(imageBytes);
-                result.Add(imageBytesBase64String);
-            }
+                var result = new List<string>();
 
-            return result;
+                //grab vehicle images with an id matching the vehicle id passed to as the function para,eter
+                var vehicleImages = db.VehicleImages.Where(x => x.VehicleId == id).ToList();
+
+                //convert each image from a byte array to a base64 string 
+                foreach (var item in vehicleImages)
+                {
+                    var imageBytes = item.ImageBytes;
+                    var imageBytesToBase64String = Convert.ToBase64String(imageBytes);
+                    result.Add(imageBytesToBase64String);
+                }
+                
+                //return the images in the form of a list of strings
+                return result;
+            } 
+            catch(Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+
+        //get the profile icon associated with the dealership, converted to basse 64 string
+        public string GetDealershipProfileIconAsBase64String(int id)
+        {
+            try
+            {
+                //grab the dealership's icon byte array, convert it to a base 64 string
+                var dealershipIconImageBytes = db.Dealerships.FirstOrDefault(x => x.Id == id).Icon;
+                var imageBytesToBase64String = Convert.ToBase64String(dealershipIconImageBytes);
+
+                return imageBytesToBase64String;
+
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+
+        //get the profile background image associated with the dealership, converted to basse 64 string
+        public string GetDealershipProfileBackgroundAsBase64String(int id)
+        {
+            try
+            {
+                //grab the dealership's background byte array, convert it to a base 64 string
+                var dealershipBackgroundImageBytes = db.Dealerships.FirstOrDefault(x => x.Id == id).ProfileBackgroundImage;
+                var imageBytesToBase64String = Convert.ToBase64String(dealershipBackgroundImageBytes);
+
+                return imageBytesToBase64String;
+
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
         }
     }
 }
