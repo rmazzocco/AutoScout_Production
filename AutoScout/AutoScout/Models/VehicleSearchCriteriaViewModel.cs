@@ -35,6 +35,12 @@ namespace AutoScout.Models
                 var imageBytesBase64String = Convert.ToBase64String(imageBytes);
                 ImageBytes = imageBytesBase64String;
             }
+            else
+            {
+                byte[] errorImageArray = System.IO.File.ReadAllBytes(@"C:\Users\EvanBauer\Music\Git\AutoScout_Production\AutoScout_Production\AutoScout\AutoScout\Content\images\no_image_available.jpg");
+                string base64ImageRepresentationError = Convert.ToBase64String(errorImageArray);
+                ImageBytes = base64ImageRepresentationError;
+            }
         }
 
         public VehicleSearchCriteriaViewModel(int id, string make, string model, int year, decimal price, int mileage, string transmission, string style, string condition, int cylinderNumber, string exteriorColor, int dealershipIdNumber, string dealershipName)
@@ -54,12 +60,20 @@ namespace AutoScout.Models
             DealershipName = dealershipName;
 
             var db = new AutoScoutDBContext();
-            var imageBytes = db.VehicleImages.FirstOrDefault(x => x.VehicleId == Id).ImageBytes;
-            if (imageBytes != null)
+            var vehicleImage = db.VehicleImages.FirstOrDefault(x => x.VehicleId == Id);
+
+            if (vehicleImage != null)
             {
+                var imageBytes = vehicleImage.ImageBytes;
                 //convert image byte array to base64 string to be rendered properly in browser
                 var imageBytesBase64String = Convert.ToBase64String(imageBytes);
                 ImageBytes = imageBytesBase64String;
+            }
+            else
+            {
+                byte[] errorImageArray = System.IO.File.ReadAllBytes(@"C:\Users\EvanBauer\Music\Git\AutoScout_Production\AutoScout_Production\AutoScout\AutoScout\Content\images\no_image_available.jpg");
+                string base64ImageRepresentationError = Convert.ToBase64String(errorImageArray);
+                ImageBytes = base64ImageRepresentationError;
             }
         }
 

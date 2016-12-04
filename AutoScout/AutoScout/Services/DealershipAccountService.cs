@@ -143,13 +143,79 @@ namespace AutoScout.Services
                     
                 }
                 return;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 var errorService = new ErrorService(db);
                 errorService.logError(ex);
 
                 throw (ex);
             }
+        }
+
+        //create a new vehicle with parameters given, along with vehicle images associated with the vehicle, and add them to the database
+        public void CreateInventoryVehicle(int id, string vin, int mileage, string exteriorColor, string interiorColor, string make, string model, int year, decimal price, string condition, int cylinderNumber, string transmissionType, HttpPostedFileBase[] imageFiles)
+        {
+
+            try
+            {
+                var currentDealershipId = GetCurrentUserDealershipIdFromIdentity();
+                var dealership = db.Dealerships.FirstOrDefault(x => x.Id == currentDealershipId);
+                var newVehicle = new Vehicle
+                {
+                    VIN = vin,
+                    Mileage = mileage,
+                    ExteriorColor = exteriorColor,
+                    InteriorColor = interiorColor,
+                    Make = make,
+                    Model = model,
+                    Year = year,
+                    Price = price,
+                    Condition = condition,
+                    CylinderNumber = cylinderNumber,
+                    Transmission = transmissionType,
+                    DealershipId = currentDealershipId
+                };
+
+
+                var vehicleImageList = new List<VehicleImage>();
+                for (int i = 0; i < imageFiles.Count(); i++)
+                {
+                    //create new byte array of appropriate length
+                    var imageBytes = new byte[imageFiles[i].ContentLength];
+
+                    //read bytes from input file and convert to byte array, store in image bytes (empty byte array)
+                    imageFiles[i].InputStream.Read(imageBytes, 0, imageFiles[i].ContentLength);
+
+
+                    var vehicleImage = new VehicleImage
+                    {
+                        ImageBytes = imageBytes,
+                        VehicleId = id
+                    };
+
+                    vehicleImageList.Add(vehicleImage);
+                }
+
+                //Add vehicle to Vehicles table 
+                db.Vehicles.Add(newVehicle);
+
+                //Add vehicle images to VehicleImages table
+                foreach (var item in vehicleImageList)
+                {
+                    db.VehicleImages.Add(item);
+                }
+
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+            
         }
 
     }

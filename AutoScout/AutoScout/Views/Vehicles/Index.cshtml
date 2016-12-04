@@ -46,15 +46,20 @@
                     <div class="form-group">
                         <input class="pad-right-10" type="checkbox" name="modelCheckBox" data-bind="visible: useMakeField, checked: useModelField" />
                         <label for="selectModel" data-bind="visible: useMakeField">Model</label>
-                        <select class="form-control select-small-text" id="selectModel" data-bind="visible: useModelField, optionsValue: 'description', optionsText: 'description', value: Model"></select>
+                        <select class="form-control select-small-text" id="selectModel" data-bind="visible: useModelField, value: Model">
+                            @foreach (var mod in allModels)
+                            {
+                                <option>@mod</option>
+                            }
+                        </select>
                     </div>
                     <div class="form-group">
                         <input class="pad-right-10" type="checkbox" name="yearCheckBox" data-bind="checked: useYearField" />
                         <label for="selectYear">Year</label>
                         <select class="form-control select-small-text" id="selectYear" data-bind="visible: useYearField, value: Year">
-                            @foreach (var mod in allYears)
+                            @foreach (var year in allYears)
                             {
-                                <option>@mod</option>
+                                <option>@year</option>
                             }
                         </select>
                     </div>
@@ -75,7 +80,7 @@
                     </div>
                     <div class="form-group">
                         <input class="pad-right-10" type="checkbox" name="exteriorColorCheckBox" data-bind="checked: useExteriorColorField" />
-                        <label for="selectExteriorColor">ExteriorColor</label>
+                        <label for="selectExteriorColor">Exterior Color</label>
                         <select class="form-control select-small-text" id="selectExteriorColor" data-bind="visible: useExteriorColorField, value: ExteriorColor">
                             @foreach (var color in allExteriorColors)
                             {
@@ -104,7 +109,7 @@
             </div>
             
             <div class="btn-group-vertical btn-group-xs center-block" role="group" aria-label="">
-                <button id="searchButton" data-bind="click: SendSearch" type="button" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> Search</button>
+                <button id="searchButton" data-bind="click: SendSearch, enable: !NoFilterSelected()" type="button" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> Search</button>
             </div>
         </div>
     </div>

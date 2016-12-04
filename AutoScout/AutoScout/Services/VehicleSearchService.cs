@@ -16,12 +16,50 @@ namespace AutoScout.Services
             db = dbContext;
         }
 
+        public Vehicle GetVehicleFromId(int id)
+        {
+            try
+            {
+                var vehicle = db.Vehicles.Find(id);
+                return vehicle;
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+            
+        }
+
         public IEnumerable<Vehicle> GetNewestVehicles()
         {
             try
             {
                 var results = db.Vehicles.Where(x => x.Id > 0).OrderBy(x => x.DateCreated).ToList();
                 return results;
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+
+        public IEnumerable<Vehicle> GetNewest3Vehicles()
+        {
+            try
+            {
+                var results = db.Vehicles.Where(x => x.Id > 0).OrderBy(x => x.DateCreated).ToArray();
+                var top3 = new List<Vehicle>();
+                for(var i = 0; i < 3; ++i)
+                {
+                    top3.Add(results[i]);
+                }
+                return top3;
             }
             catch (Exception ex)
             {
@@ -112,20 +150,20 @@ namespace AutoScout.Services
                 /*set the price min & max, and the mileage min & max to be used in the query 
                 based on whether custom values were submitted*/
                 minPrice = minPriceSet == true ? minPrice : 0;
-                maxPrice = maxPriceSet == true ? maxPrice : 0;
+                maxPrice = maxPriceSet == true ? maxPrice : 999999;
                 minMileage = minMileageSet == true ? minMileage : 0;
                 maxMileage = maxMileageSet == true ? maxMileage : 999999;
 
                 /* query database of vehicles using user submitted search criteria - using Entity Framework */
-                var results = db.Vehicles.Where(x => make != "" ? x.Make == make : x.Make != "" &&
-                                 make != "" ? x.Model == model : x.Model != "" &&
-                                 year > 0 ? x.Year == year : x.Year > 0 &&
-                                 transmission != "" ? x.Transmission == transmission : x.Transmission != "" &&
-                                 style != "" ? x.Style == style : x.Style != "" &&
-                                 cylinderNumber > 0 ? x.CylinderNumber == cylinderNumber : x.CylinderNumber > 0 &&
-                                 exteriorColor != "" ? x.ExteriorColor == exteriorColor : x.ExteriorColor != "" &&
-                                 x.Price > minPrice && x.Price < maxPrice &&
-                                 x.Mileage > minMileage && x.Mileage < maxMileage).ToList();
+                var results = db.Vehicles.Where(x => (make != "" ? x.Make == make : x.Make != "") &&
+                                 (model != "" ? x.Model == model : x.Model != "") &&
+                                 (year > 0 ? x.Year == year : x.Year > 0) &&
+                                 (transmission != "" ? x.Transmission == transmission : x.Transmission != "") &&
+                                 (style != "" ? x.Style == style : x.Style != "") &&
+                                 (cylinderNumber > 0 ? x.CylinderNumber == cylinderNumber : x.CylinderNumber > 0) &&
+                                 (exteriorColor != "" ? x.ExteriorColor == exteriorColor : x.ExteriorColor != "") &&
+                                 (x.Price > minPrice && x.Price < maxPrice) &&
+                                 (x.Mileage > minMileage && x.Mileage < maxMileage)).ToList();
 
                 //return list of vehicles matching criteria
                 return results;

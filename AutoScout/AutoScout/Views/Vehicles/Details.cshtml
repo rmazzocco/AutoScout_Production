@@ -26,20 +26,22 @@
     <div class="row">
         <!-- Carousel of current vehicle images -->
         <div class="col-md-8">
-            <div id="carousel-generic" class="carousel slide" data-ride="carousel">
-                <ol class="carousel-indicators">
-                    @* Using the array of images for the vehicle, populate the carousel buttons *@
-                    @for (var i = 0; i < imageBase64Strings.Count(); ++i)
-                    {
-                        var activeClass = "active";
-                        if (i > 0)
+            @if(imageBase64Strings.Length > 1)
+            {
+                <div id="carousel-generic" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        @* Using the array of images for the vehicle, populate the carousel buttons *@
+                        @for (var i = 0; i < imageBase64Strings.Count(); ++i)
                         {
-                            activeClass = "";
+                            var activeClass = "active";
+                            if (i > 0)
+                            {
+                                activeClass = "";
+                            }
+                            <li data-target="#carousel-generic" data-slide-to="@i" class="@activeClass"></li>
                         }
-                        <li data-target="#carousel-generic" data-slide-to="@i" class="@activeClass"></li>
-                    }
                     
-                </ol>
+                    </ol>
                 <div class="carousel-inner" role="listbox">
                     @* Using the array of images for the vehicle, dynamically populate the carousel image items*@
                     @for (var i = 0; i < imageBase64Strings.Count(); ++i)
@@ -64,6 +66,12 @@
                     <span class="sr-only">Next</span>
                 </a>
             </div>
+            }else
+            {
+                
+                <img class="center-block text-center img-responsive" src="data:image/png;base64,@imageBase64Strings[0]" alt="Image" />
+            }
+
             <br />
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -142,9 +150,9 @@
 
 <br />
 <br />
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+<p class="bottomLink">
+    
+    <span class="glyphicon glyphicon-triangle-left"></span> @Html.ActionLink("Back", "Index")
 </p>
 
 <script type="text/javascript">

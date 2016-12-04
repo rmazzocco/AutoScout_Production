@@ -7,6 +7,7 @@
 <div class="container-fluid">
 
     <h2>Add a New Vehicle to Inventory</h2>
+    <h3>Details</h3>
 
     @using (Html.BeginForm(new { enctype = "multipart/form-data" }))
     {
@@ -65,6 +66,7 @@
                             @Html.ValidationMessageFor(model => model.Model, "", new { @class = "text-danger" })
                         </div>
                     </div>
+                    
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
@@ -114,17 +116,93 @@
                             @Html.ValidationMessageFor(model => model.CylinderNumber, "", new { @class = "text-danger" })
                         </div>
                     </div>
-
+                    <br />
                     <div class="form-group">
-                        <div class="col-md-offset-2 col-md-10">
-                            <input type="submit" value="Create" class="btn btn-default" />
+                        <div class="col-md-offset-5 col-md-7">
+                            <input type="submit" value="Create Vehicle" class="btn btn-default" />
                         </div>
                     </div>
+                   
                 </div>
             </div>
+            
         </div>
 
     }
+
+    
 </div>
     
+<script>
+    function NewVehicleImageViewModel(file) {
+        var self = this;
+        self.FileName = file.name;
+
+        self.Src = ko.observable("");
+
+        (function(){
+            var src = "";
+            var reader = new FileReader();
+            reader.onloadend = function () {
+                src = reader.result;
+            }
+            reader.readAsDataURL(file);
+            self.Src(src)
+        });
+
+    };
+
+    function NewVehicleViewModel() {
+        var self = this;
+        self.VIN = ko.observable("");
+        self.Mileage = ko.observable(0);
+        self.ExteriorColor = ko.observable("");
+        self.InteriorColor = ko.observable("");
+        self.Make = ko.observable("");
+        self.Model = ko.observable("");
+        self.Year = ko.observable("");
+        self.Price = ko.observable("");
+        self.Transmission = ko.observable("");
+        self.Style = ko.observable("");
+        self.Condition = ko.observable("");
+        self.CylinderCount = ko.observable("");
+
+        
+
+        self.Images = ko.observableArray([]);
+
+        self.OnFileSelectedEvent = function (vm, evt) {
+            ko.utils.arrayForEach(evt.target.files, function (file) {
+                self.Images.push(new NewVehicleImageViewModel(file));
+            });
+        };
+
+        self.AddVehicle = function () {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Create", "Vehicles")",
+                data: {
+                    vin: self.VIN,
+                    mileage: self.Mileage,
+                    exteriorColor: self.ExteriorColor,
+                    interiorColor: self.InteriorColor,
+                    make: self.Make,
+                    model: self.Model,
+                    year: self.Year,
+                    price: self.Price,
+                    transmission: self.Transmission,
+                    style: self.Style,
+                    condition: self.Condition,
+                    cylinderCount: self.CylinderCount
+
+                },
+                success: function (data) {
+
+                }
+            });
+        };
+
+    }
+    ko.applyBindings(NewVehicleViewModel);
+</script>
 

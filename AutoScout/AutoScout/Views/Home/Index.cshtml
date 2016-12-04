@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<AutoScout.Models.Vehicle>
+
+@{
     ViewBag.Title = "Home Page";
 }
 
@@ -7,3 +9,85 @@
     <img class="img-responsive center-block text-center" src="~/Content/images/cars2.png" />
     <p class="lead">AutoScout is a service for automobile dealerships to post inventory items, and consumers to find the perfect vehicle for their needs at a satidfactory price. </p>
 </div>
+@* Newest listings list *@
+
+<div class="panel panel-default">
+    <div class="panel-heading"><span class="glyphicon glyphicon-th"></span> Newest Listings</div>
+        <div class="panel-body">
+            <!-- List of results matching search criteria - loaded asynchronously -->
+            <!-- ko foreach: Vehicles() -->
+            <div class="col-md-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h5><span data-bind="text: Year"> </span><span data-bind="text: Make"></span> <span data-bind="text: Model"></span> <span class="badge" style="background: #333333; color: white">New</span></h5>
+                    </div>
+                    <div class="panel-body">
+                        <div style="position:relative; height: 150px">
+                            <img id="previewImage" data-bind="attr: { src: PreviewImage }" class="img-rounded img-responsive img-thumbnail center-block" style="max-height: 150px" alt="VehicleImage" />
+                        </div>
+                        <h5 class="price"><span data-bind="text: Price"></span></h5>
+                        <div class="btn-group-vertical btn-group-xs center-block" role="group" aria-label="">
+                            <button id="detailsButton" data-bind="click: ViewVehiclePage" type="button" class="btn btn-default"><span class="glyphicon glyphicon-info-sign"></span> Vehicle Details</button>
+                            <button type="button" data-bind="click: ViewDealershipPage" class="btn btn-default"><span class="glyphicon glyphicon-user"></span><span data-bind="text: DealershipName"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /ko -->
+        </div>
+</div>
+
+
+<script>
+    function NewListingViewModel(id, make, model, year, style, price, mileage, exteriorColor, cylinderCount, transmission, condition, imageBytes, dealershipId, dealershipName) {
+        var self = this;
+        self.Id = id;
+        self.Make = make;
+        self.Model = model;
+        self.Year = year + " ";
+        self.Style = style;
+        self.Price = "$" + price + ".00";
+        self.Mileage = mileage;
+        self.ExteriorColor = exteriorColor;
+        self.CylinderCount = cylinderCount;
+        self.Transmission = transmission;
+        self.Condition = condition;
+        self.ImageBytes = imageBytes;
+        self.PreviewImage = "data:image/png;base64," + imageBytes;
+        self.DealershipName = " " + dealershipName;
+        self.DealershipId = dealershipId;
+
+        self.ViewVehiclePage = function () {
+            window.location.href = "@Url.Action("Details", "Vehicles")/" + self.Id;
+        }
+
+        self.ViewDealershipPage = function () {
+            window.location.href = "@Url.Action("Details", "Dealerships")/" + self.DealershipId;
+        }
+
+    };
+
+    function HomePageViewModel() {
+        var self = this;
+        self.Vehicles = ko.observableArray([]);
+
+        $(document).ready(function () {
+
+            self.LoadVehicles();
+        });
+
+        self.LoadVehicles = function () {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetNewestVehicles", "Home")",
+                success: function (data) {
+                    for (var i = 0; i < data.length; i++) {
+                        //after retirieving initial results for page, add the items to the Vehicles Array to be rendered to the screen on load
+                        self.Vehicles.push(new NewListingViewModel(data[i].Id, data[i].Make, data[i].Model, data[i].Year, data[i].Style, data[i].Price, data[i].Mileage, data[i].ExteriorColor, data[i].CylinderNumber, data[i].Transmission, data[i].Condition, data[i].ImageBytes, data[i].DealershipIdNumber, data[i].DealershipName));
+                    }
+                }
+            })
+        };
+    }
+    ko.applyBindings(HomePageViewModel);
+</script>

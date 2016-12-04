@@ -132,6 +132,7 @@ namespace AutoScout.Controllers
                 {
                     db.Vehicles.Add(vehicle);
                     db.SaveChanges();
+
                     return RedirectToAction("AddImage", new { id = vehicle.Id });
                 }
 
@@ -146,6 +147,19 @@ namespace AutoScout.Controllers
                 throw (ex);
             }
         }
+
+
+        //POST: Vehicles/Create
+        //binded using knockout
+        /*[Authorize]
+        [HttpPost]
+        public ActionResult Create(int id, int vin, int mileage, string exteriorColor, string interiorColor, string make, string model, int year, decimal price, string transmission, string style, string condition, int cylinderNumber, HttpPostedFileBase[] imageFiles)
+        {
+
+            return RedirectToAction("Index", "Dealerships");
+        }
+        */
+        
 
         // GET: Vehicles/Edit/5
         public ActionResult Edit(int? id)
@@ -170,7 +184,7 @@ namespace AutoScout.Controllers
                     return HttpNotFound();
                 }
                 ViewBag.DealershipId = new SelectList(db.Dealerships, "Id", "CompanyName", vehicle.DealershipId);
-                return PartialView(vehicle);
+                return View(vehicle);
             }
             catch (Exception ex)
             {
@@ -294,7 +308,7 @@ namespace AutoScout.Controllers
         }
 
         //GET - retrieve vehicles that meet custom search criteria
-        public void SearchInventory()
+        /*public void SearchInventory()
         {
             try
             {
@@ -309,7 +323,7 @@ namespace AutoScout.Controllers
 
                 throw (ex);
             }
-        }
+        }*/
 
         //Get - retrieve vehicle search results
         public JsonResult GetSearchResults(string make, string model, string transmission, string style, string condition, int year, int minPrice, int maxPrice, int minMileage, int maxMileage, int cylinderNumber, string exteriorColor)
@@ -408,7 +422,12 @@ namespace AutoScout.Controllers
             }
         }
 
-        
+        public JsonResult GetCurrentStateDetails(int id)
+        {
+            var vehicleService = new VehicleSearchService(db);
+            var vehicle = vehicleService.GetVehicleFromId(id);
+            return Json(vehicle, JsonRequestBehavior.AllowGet);
+        }
 
 
         [HttpPost]
@@ -438,6 +457,36 @@ namespace AutoScout.Controllers
                 }
 
                 return View(model);
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+
+        //Post - Add array of images, selected by dealership user for a single vehicle
+        [Authorize]
+        [HttpPost]
+        public ActionResult SetProfileImages(HttpPostedFileBase[] headerImageFile)
+        {
+            try
+            {
+                //get the dealer id from dealership account service
+                var dealershipService = new DealershipAccountService(db);
+                var imageService = new ImageManagementService(db);
+                var currentDealerId = dealershipService.GetCurrentUserDealershipIdFromIdentity();
+
+                //add images to Dealership table using image service
+                var dealership = db.Dealerships.FirstOrDefault(x => x.Id == currentDealerId);
+                if (dealership != null)
+                {
+                    //imageService.AssignProfileImagesToDealership(currentDealerId, headerImageFile, iconImageFile);
+                }
+
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {

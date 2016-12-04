@@ -183,6 +183,7 @@ namespace AutoScout.Controllers
         }
 
         //Post - set images for dealership profile's header image and icon
+        [Authorize]
         [HttpPost]
         public ActionResult SetProfileImages(HttpPostedFileBase headerImageFile, HttpPostedFileBase iconImageFile)
         {

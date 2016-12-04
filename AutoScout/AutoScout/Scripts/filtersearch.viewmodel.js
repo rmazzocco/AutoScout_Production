@@ -119,6 +119,15 @@ function FilterSearchViewModel() {
     self.usePriceField = ko.observable(false);
     self.useTransmissionField = ko.observable(false);
 
+    self.NoFilterSelected = ko.computed(function () {
+        if (!self.useMakeField() && !self.useModelField() && !self.useCylinderField() && !self.useStyleField() && !self.useInteriorColorField()
+            && !self.useExteriorColorField() && !self.useYearField() && !self.useConditionField() && !self.useMileageField()
+            && !self.usePriceField() && !self.useTransmissionField()) {
+            return true;
+        }
+        return false;
+    });
+
     /* observable values uses to keep track of input control 
     values (text / dropdown values )*/
     self.Make = ko.observable("");
@@ -192,31 +201,58 @@ function FilterSearchViewModel() {
         //convert values to null if the user doesn't submit a choice for that criteria item
         if (self.useMakeField()) {
             self.MakeChecked = self.Make();
+        } else {
+            self.MakeChecked = null;
         }
+
         if (self.useModelField()) {
             self.ModelChecked = self.Model();
+        } else {
+            self.ModelChecked = null;
         }
+
         if (self.usePriceField()) {
             self.MinimumPriceChecked = self.MinimumPrice();
             self.MaximumPriceChecked = self.MaximumPrice();
+        } else {
+            self.MinimumPriceChecked = -1;
+            self.MaximumPriceChecked = -1;
         }
+
         if (self.useConditionField()) {
             self.ConditionChecked = self.Condition();
+        } else {
+            self.ConditionChecked = null;
         }
+
         if (self.useCylinderField()) {
             self.CylinderCountChecked = self.CylinderCount();
+        } else {
+            self.CylinderCountChecked = -1;
         }
+
         if (self.useExteriorColorField()) {
             self.ExteriorColorChecked = self.ExteriorColor();
+        } else {
+            self.ExteriorColorChecked = null;
         }
+
         if (self.useStyleField()) {
             self.StyleChecked = self.Style();
+        } else {
+            self.StyleChecked = null;
         }
+
         if (self.useTransmissionField()) {
             self.TransmissionChecked = self.Transmission();
+        } else {
+            self.TransmissionChecked = null;
         }
+
         if (self.useYearField()){
             self.YearChecked = self.Year();
+        } else {
+            self.YearChecked = -1
         }
             
         //send all custom search criteria to server to render desired vehicle selections

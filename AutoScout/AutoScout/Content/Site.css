@@ -141,3 +141,12 @@ body
 .width-100{
     width:100%;
 }
+
+.bottomLink a {
+    color: #B71C1C !important;
+}
+
+.bottomLink a:hover {
+    color: black !important;
+    text-decoration: none;
+}

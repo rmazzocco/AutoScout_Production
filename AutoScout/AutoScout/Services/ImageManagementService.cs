@@ -102,19 +102,59 @@ namespace AutoScout.Services
 
                 //grab vehicle images with an id matching the vehicle id passed to as the function para,eter
                 var vehicleImages = db.VehicleImages.Where(x => x.VehicleId == id).ToList();
-
-                //convert each image from a byte array to a base64 string 
-                foreach (var item in vehicleImages)
+                if (vehicleImages.Count > 0)
                 {
-                    var imageBytes = item.ImageBytes;
-                    var imageBytesToBase64String = Convert.ToBase64String(imageBytes);
-                    result.Add(imageBytesToBase64String);
+                    //convert each image from a byte array to a base64 string 
+                    foreach (var item in vehicleImages)
+                    {
+                        var imageBytes = item.ImageBytes;
+                        var imageBytesToBase64String = Convert.ToBase64String(imageBytes);
+                        result.Add(imageBytesToBase64String);
+                    }
                 }
-                
+                else
+                {
+                    byte[] errorImageArray = System.IO.File.ReadAllBytes(@"C:\Users\EvanBauer\Music\Git\AutoScout_Production\AutoScout_Production\AutoScout\AutoScout\Content\images\no_image_available.jpg");
+                    string base64ImageRepresentationError = Convert.ToBase64String(errorImageArray);
+                    result.Add(base64ImageRepresentationError);
+                }
+               
                 //return the images in the form of a list of strings
                 return result;
             } 
             catch(Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+
+        //Acquire string of base 64 strings, to pull vehicle images from the db to the view to be rendered in the browser
+        public string GetPreviewImageConvertedToBase64String(int vehicleId)
+        {
+            try
+            {
+                //grab vehicle images with an id matching the vehicle id passed to as the function parameter
+                var vehicleImages = db.VehicleImages.Where(x => x.VehicleId == vehicleId).ToList().OrderBy(x => x.Id);
+                if (vehicleImages.Count() > 0)
+                {
+                    var image = vehicleImages.FirstOrDefault();
+                    //convert each image from a byte array to a base64 string 
+
+                    var imageBytes = image.ImageBytes;
+                    var imageBytesToBase64String = Convert.ToBase64String(imageBytes);
+
+                    //return the image i the form of string
+                    return imageBytesToBase64String;
+                }
+                byte[] errorImageArray = System.IO.File.ReadAllBytes(@"C:\Users\EvanBauer\Music\Git\AutoScout_Production\AutoScout_Production\AutoScout\AutoScout\Content\images\no_image_available.jpg");
+                string base64ImageRepresentationError = Convert.ToBase64String(errorImageArray);
+                return base64ImageRepresentationError;
+                
+            }
+            catch (Exception ex)
             {
                 var errorService = new ErrorService(db);
                 errorService.logError(ex);
