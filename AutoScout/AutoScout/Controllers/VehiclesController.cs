@@ -133,7 +133,7 @@ namespace AutoScout.Controllers
                     db.Vehicles.Add(vehicle);
                     db.SaveChanges();
 
-                    return RedirectToAction("AddImage", new { id = vehicle.Id });
+                    return RedirectToAction("Edit", new { id = vehicle.Id });
                 }
 
                 ViewBag.DealershipId = new SelectList(db.Dealerships, "Id", "CompanyName", vehicle.DealershipId);
@@ -148,18 +148,6 @@ namespace AutoScout.Controllers
             }
         }
 
-
-        //POST: Vehicles/Create
-        //binded using knockout
-        /*[Authorize]
-        [HttpPost]
-        public ActionResult Create(int id, int vin, int mileage, string exteriorColor, string interiorColor, string make, string model, int year, decimal price, string transmission, string style, string condition, int cylinderNumber, HttpPostedFileBase[] imageFiles)
-        {
-
-            return RedirectToAction("Index", "Dealerships");
-        }
-        */
-        
 
         // GET: Vehicles/Edit/5
         public ActionResult Edit(int? id)
@@ -184,6 +172,15 @@ namespace AutoScout.Controllers
                     return HttpNotFound();
                 }
                 ViewBag.DealershipId = new SelectList(db.Dealerships, "Id", "CompanyName", vehicle.DealershipId);
+               
+                var vehicleService = new VehicleSearchService(db);
+                
+                if (vehicle != null)
+                {
+                    ViewBag.VehicleImages = vehicleService.GetAllVehicleImages(vehicle.Id);
+                }
+                
+
                 return View(vehicle);
             }
             catch (Exception ex)
@@ -279,6 +276,68 @@ namespace AutoScout.Controllers
             }
         }
 
+        //GET - retrieve jason representations of vehicle images to render to view
+        public JsonResult LoadVehicleImages(int id)
+        {
+            try
+            {
+                var vehicleService = new VehicleSearchService(db);
+                var dealershipService = new DealershipAccountService(db);
+                var images = vehicleService.GetAllVehicleImages(id);
+
+
+                var vehicleImages = new List<VehicleImageViewModel>();
+                if (images != null)
+                {
+                    foreach (var item in images)
+                    {
+                        var imageBytes = item.ImageBytes;
+                        //convert image byte array to base64 string to be rendered properly in browser
+                        var imageBytesBase64String = Convert.ToBase64String(imageBytes);
+                        
+
+                        vehicleImages.Add(new VehicleImageViewModel(item.Id, imageBytesBase64String));
+                    }
+                    return Json(vehicleImages, JsonRequestBehavior.AllowGet);
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+        
+        [HttpPost]
+        public void DeleteVehicleImage(int? vehicleImageId)
+        {
+            try
+            {
+                var vehicleService = new VehicleSearchService(db);
+                var dealershipService = new DealershipAccountService(db);
+                if (vehicleImageId != null)
+                {
+                    var vehicleImage = db.VehicleImages.Find(vehicleImageId);
+                    if(vehicleImage != null)
+                    {
+                        dealershipService.DeleteVehicleImageFromInventoryVehicle(vehicleImage);
+                    }
+                   
+                }
+                                                                                                                                                                                                                                                                                                                                 
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+
         //GET
         public ActionResult AddImage(int? id)
         {
@@ -307,24 +366,6 @@ namespace AutoScout.Controllers
             }
         }
 
-        //GET - retrieve vehicles that meet custom search criteria
-        /*public void SearchInventory()
-        {
-            try
-            {
-                var service = new VehicleSearchService(db);
-                service.SearchInventory(null, null, 2005, -1, -1, -1, -1, null, null, null, -1, null);
-                service.SearchInventory(null, null, -1, -1, -1, -1, -1, null, null, null, -1, "Silver");
-            }
-            catch (Exception ex)
-            {
-                var errorService = new ErrorService(db);
-                errorService.logError(ex);
-
-                throw (ex);
-            }
-        }*/
-
         //Get - retrieve vehicle search results
         public JsonResult GetSearchResults(string make, string model, string transmission, string style, string condition, int year, int minPrice, int maxPrice, int minMileage, int maxMileage, int cylinderNumber, string exteriorColor)
         {
@@ -338,12 +379,12 @@ namespace AutoScout.Controllers
                     //send search result criteria from parameters to SearchInventory method which will return matching vehicles
                     var searchResults = vehicleSearchService.SearchInventory(make, model, year, minPrice, maxPrice, minMileage, maxMileage, transmission, style, condition, cylinderNumber, exteriorColor);
                     var vehicleViewModels = new List<VehicleSearchCriteriaViewModel>();
-
                     foreach (var item in searchResults)
                     {
-                        var companyName = db.Dealerships.FirstOrDefault(x => x.Id == item.DealershipId).CompanyName;
+                        var companyName = vehicleSearchService.GetCompanyName(item.DealershipId);
                         vehicleViewModels.Add(new VehicleSearchCriteriaViewModel(item.Id, item.Make, item.Model, item.Year, item.Price, item.Mileage, item.Transmission, item.Style, item.Condition, item.CylinderNumber, item.ExteriorColor, item.DealershipId, companyName));
                     }
+                    //return JSON objects to view model
                     return Json(vehicleViewModels, JsonRequestBehavior.AllowGet);
                 }
             }
@@ -403,7 +444,7 @@ namespace AutoScout.Controllers
             try
             {
                 var service = new VehicleSearchService(db);
-                var vehicles = service.GetNewestVehicles();
+                var vehicles = service.GetAllVehicles();
                 var vehicleViewModels = new List<VehicleSearchCriteriaViewModel>();
 
                 foreach (var item in vehicles)
@@ -456,7 +497,7 @@ namespace AutoScout.Controllers
 
                 }
 
-                return View(model);
+                return RedirectToAction("Edit", new { id = id }); ;
             }
             catch (Exception ex)
             {

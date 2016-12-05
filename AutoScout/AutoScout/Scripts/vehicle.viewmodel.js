@@ -1,4 +1,13 @@
-﻿function VehicleInfoViewModel(){
+﻿function VehicleImageViewModel(id, base64String){
+    var self = this;
+    self.Id = id;
+    self.Base64String = base64String;
+
+    
+    
+}
+
+function VehicleInfoViewModel(){
     var self = this;
     self.Make = ko.observable("");
     self.Model = ko.observable("");
@@ -14,11 +23,36 @@
     self.Condition = ko.observable("");
     self.Cylinders = ko.observable("");
 
+    self.VehicleImages = ko.observableArray([]);
+ 
+    
+
+    self.LoadVehicleImages = function () {
+        $.ajax({
+            type: "POST",
+            url: $("#viewFullVehicleInfo").data("url") + "/" + self.Id,
+            success: function () {
+
+
+                for (var i = 0; i < data.length; i++) {
+                    //after retirieving initial results for page, add the items to the Vehicles Array to be rendered to the screen on load
+                    self.Images.push(new VehicleImageViewModel(data[i].Id, data[i].Base64StImageBytesToBase64Stringring));
+                }
+            }
+
+
+
+        });
+    };
+            
+    
+    
+
     self.LoadCurrentDetails = function () {
         self.LoadVehicles();
         $.ajax({
             type: "GET",
-            url: "Vehicles/GetCurrentStateDetails/",
+            url: $("#viewFullDetails").data("url") + "/" + self.Id,
             success: function (data) {
                 self.Id(data.Id);
                 self.Make(data.Make);
@@ -38,7 +72,7 @@
         });
 
     };
-
+    
     /*
     self.SaveChanges = function () {
         $.ajax({

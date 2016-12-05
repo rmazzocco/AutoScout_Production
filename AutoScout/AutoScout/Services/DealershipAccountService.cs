@@ -56,6 +56,22 @@ namespace AutoScout.Services
             }
         }
 
+        public Dealership GetDealership(int id){
+            try
+            {
+                var dealership = db.Dealerships.Find(id);
+                return dealership;
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+            
+        }
+
         public string GetCurrentUserIdentity()
         {
             try
@@ -143,6 +159,23 @@ namespace AutoScout.Services
                     
                 }
                 return;
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+
+        //Delete an unwanted vehicle image for an inventory vehicle
+        public void DeleteVehicleImageFromInventoryVehicle(VehicleImage image)
+        {
+            try
+            {
+                db.VehicleImages.Remove(image);
+                db.SaveChanges();
             }
             catch (Exception ex)
             {

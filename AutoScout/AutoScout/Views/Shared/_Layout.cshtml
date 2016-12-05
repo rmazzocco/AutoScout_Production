@@ -47,10 +47,21 @@
                             <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Profile Settings
                         </a>
                     </li>
-                    }else
+                    <li>
+                        <a href="@Url.Action("Details", "Dealerships", new { id = currentUserId })">
+                            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> View My Public Profile
+                        </a>
+
+                    </li>
+                    }
+                    else
                     {
-                    <li>@Html.ActionLink("Vehicle Search", "Index", "Vehicles")</li>
-                        
+                        <li>
+                            <a href="@Url.Action("Index", "Vehicles")">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search Inventory
+                            </a>
+                        </li>
+
                     }
                 </ul>
                 @Html.Partial("_LoginPartial")

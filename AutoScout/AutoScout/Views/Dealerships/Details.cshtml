@@ -7,8 +7,17 @@
 
 <div class="container-fluid">
     <div class="fb-profile">
-        <img align="left" class="fb-image-lg" src="@ViewBag.Background" alt="Profile image example" />
-        <img align="left" class="fb-image-profile thumbnail thumbnail" src="@ViewBag.Icon" alt="Profile image example" />
+        @if (ViewBag.Background != "")
+        {
+            <img align="left" class="fb-image-lg" src="@ViewBag.Background" alt="Profile image example" />
+            
+        }
+
+        @if (ViewBag.Icon != null)
+        {
+            <img align="left" class="fb-image-profile thumbnail thumbnail" src="@ViewBag.Icon" alt="Profile image example" />
+        }
+
         <div class="fb-profile-text">
             <h1 data-bind="text: CompanyName"></h1>
         </div>
@@ -223,7 +232,7 @@
         self.LoadAllInfo = function () {
             $.ajax({
                 type: "GET",
-                url: "@Url.Action("GetCurrentDealershipInfo", "Dealerships")",
+                url: "@Url.Action("GetDealershipInfo", "Dealerships", new { id = Model.Id })",
                 success: function (data) {
                     self.Id(data.Id);
                     self.CompanyName(data.CompanyName);

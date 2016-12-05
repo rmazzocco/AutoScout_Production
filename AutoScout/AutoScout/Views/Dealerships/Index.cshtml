@@ -188,7 +188,8 @@
                         <td class="equal-width-cell text-center">
                             <div class="btn-group-vertical btn-group-xs width-100" role="group" aria-label="...">
                                 <button class="btn btn-danger" data-bind="click: DeleteVehicle"><span class="glyphicon glyphicon-remove"></span> Delete</button>
-                                <button class="btn btn-primary" data-bind="click: ViewInfoPage"><span class="glyphicon glyphicon-info-sign"></span> Details</button>
+                                <button class="btn btn-primary" data-bind="click: EditVehicleInfo"><span class="glyphicon glyphicon-pencil"></span> Edit</button>
+                                <button class="btn btn-info" data-bind="click: ViewInfoPage"><span class="glyphicon glyphicon-info-sign"></span> Public Posting</button>
                             </div> 
                         </td>
                     </tr>
@@ -197,7 +198,8 @@
             </table>
 
             <!-- Used to generate URLs in JS View Model -->
-            <div id="viewFullVehicleDetails" data-url="@Url.Action("Edit", "Vehicles")"></div>
+            <div id="viewFullVehicleInfo" data-url="@Url.Action("Details", "Vehicles")"></div>
+            <div id="editVehicleInfo" data-url="@Url.Action("Edit", "Vehicles")"></div>
             <div id="deleteVehicle" data-url="@Url.Action("Delete", "Vehicles")"></div>
             <div id="addVehicle" data-url="@Url.Action("Create", "Vehicles")"></div>
 

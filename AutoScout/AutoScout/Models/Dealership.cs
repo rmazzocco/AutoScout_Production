@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
+using AutoScout.Models;
+using AutoScout.Services;
 
 namespace AutoScout.Models
 {
+
     public class Dealership
     {
         public int Id { get; set; }
@@ -41,6 +44,14 @@ namespace AutoScout.Models
         public virtual AutoScoutIdentityUser AutoScoutIdentityUser { get; set; }
 
         public string AutoScoutIdentityUserId { get; set; }
+
+        public DateTime DateCreated { get; set; }
+
+        public Dealership()
+        {
+            Active = true;
+            DateCreated = DateTime.Now.ToUniversalTime();
+        }
 
     }
 }

@@ -34,6 +34,8 @@ namespace AutoScout.Models
         public string Transmission { get; set; }
         public string Style { get; set; }
         public string Condition { get; set; }
+        public bool Visible { get; set; }
+        public bool Active { get; set; }
 
         [Display(Name = "Number of Cylinders")]
         public int CylinderNumber { get; set; }
@@ -45,27 +47,15 @@ namespace AutoScout.Models
 
         public Vehicle()
         {
+
             var context = new AutoScoutDBContext();
-            
-            /*var firstImageFromDb = context.VehicleImages.First(x => x.VehicleId == this.Id);
-            if (firstImageFromDb != null)
-            {
-                this.DefaultImage = firstImageFromDb;
-            }
-            var imagesFromDb = context.VehicleImages.Where(x => x.VehicleId == this.Id);
-
-            if (imagesFromDb.Count() > 1)
-            {
-                foreach (var image in imagesFromDb)
-                {
-                    this.Images.Add(image);
-                }
-            }*/
             var service = new DealershipAccountService(context);
-
             var dealershipId = service.GetCurrentUserDealershipIdFromIdentity();
             DealershipId = dealershipId;
             DateCreated = DateTime.Now.ToUniversalTime();
+
+            Visible = true;
+            Active = true;
         }
 
     }

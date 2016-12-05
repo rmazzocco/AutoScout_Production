@@ -546,3 +546,5 @@ C:\Users\EvanBauer\Music\Git\AutoScout_Production\AutoScout_Production\AutoScout
 C:\Users\EvanBauer\Music\Git\AutoScout_Production\AutoScout_Production\AutoScout\AutoScout\obj\Debug\AutoScout.dll
 C:\Users\EvanBauer\Music\Git\AutoScout_Production\AutoScout_Production\AutoScout\AutoScout\obj\Debug\AutoScout.pdb
 C:\Users\EvanBauer\Music\Git\AutoScout_Production\AutoScout_Production\AutoScout\AutoScout\obj\Debug\AutoScout.csprojResolveAssemblyReference.cache
+C:\Users\EvanBauer\Music\Git\AutoScout_Production\AutoScout_Production\AutoScout\AutoScout\obj\Debug\AutoScout.Migrations.ActiveVisibleDealershipsDateCreatedVehicles.resources
+C:\Users\EvanBauer\Music\Git\AutoScout_Production\AutoScout_Production\AutoScout\AutoScout\obj\Debug\AutoScout.Migrations.DealerhsipDateCreated.resources

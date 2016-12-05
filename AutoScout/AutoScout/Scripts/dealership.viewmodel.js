@@ -17,7 +17,11 @@
     self.DealershipId = dealershipId;
 
     self.ViewInfoPage = function () {
-        window.location.href = $("#viewFullVehicleDetails").data("url") + "/" + self.Id;
+        window.location.href = $("#viewFullVehicleInfo").data("url") + "/" + self.Id;
+    }
+
+    self.EditVehicleInfo = function () {
+        window.location.href = $("#editVehicleInfo").data("url") + "/" + self.Id;
     }
 
     self.DeleteVehicle = function () {

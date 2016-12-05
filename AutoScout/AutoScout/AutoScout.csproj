@@ -221,6 +221,14 @@
     <Compile Include="Migrations\201611192309544_ErrorTableMigration2.Designer.cs">
       <DependentUpon>201611192309544_ErrorTableMigration2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201612041957499_ActiveVisibleDealershipsDateCreatedVehicles.cs" />
+    <Compile Include="Migrations\201612041957499_ActiveVisibleDealershipsDateCreatedVehicles.Designer.cs">
+      <DependentUpon>201612041957499_ActiveVisibleDealershipsDateCreatedVehicles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201612042044097_DealerhsipDateCreated.cs" />
+    <Compile Include="Migrations\201612042044097_DealerhsipDateCreated.Designer.cs">
+      <DependentUpon>201612042044097_DealerhsipDateCreated.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Dealership.cs" />
@@ -231,6 +239,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Models\VehicleImage.cs" />
+    <Compile Include="Models\VehicleImageViewModel.cs" />
     <Compile Include="Models\VehicleInfoViewModel.cs" />
     <Compile Include="Models\VehicleSearchCriteriaViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -377,6 +386,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201611192309544_ErrorTableMigration2.resx">
       <DependentUpon>201611192309544_ErrorTableMigration2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612041957499_ActiveVisibleDealershipsDateCreatedVehicles.resx">
+      <DependentUpon>201612041957499_ActiveVisibleDealershipsDateCreatedVehicles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612042044097_DealerhsipDateCreated.resx">
+      <DependentUpon>201612042044097_DealerhsipDateCreated.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

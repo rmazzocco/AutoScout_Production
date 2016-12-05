@@ -273,6 +273,38 @@ namespace AutoScout.Controllers
             }
         }
 
+        
+        public JsonResult GetDealershipInfo(int id)
+        {
+            try
+            {
+                var service = new DealershipAccountService(db);
+                var dealership = service.GetDealership(id);
+                var dealershipEditManager = new DealershipManager
+                {
+                    Id = dealership.Id,
+                    CompanyName = dealership.CompanyName,
+                    Email = dealership.Email,
+                    City = dealership.City,
+                    State = dealership.State,
+                    ZipCode = dealership.ZipCode,
+                    Notes = dealership.Notes,
+                    PhoneNumber = dealership.PhoneNumber,
+                    FaxNumber = dealership.FaxNumber
+                };
+
+                return Json(dealershipEditManager, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+
         //Get the base64 string version of the current dealership's background image
         [Authorize]
         [HttpGet]

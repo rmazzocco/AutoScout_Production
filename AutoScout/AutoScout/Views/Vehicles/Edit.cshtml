@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Edit";
     var description = ViewBag.StringDescription;
+    
 }
 
 <h2>Edit Vehicle</h2>
@@ -15,6 +16,7 @@
         <h4>@description</h4>
         <hr />
 
+        <h3>Details</h3>
         <div class="row">
             <div class="col-md-6">
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -117,22 +119,136 @@
                         @Html.ValidationMessageFor(model => model.CylinderNumber, "", new { @class = "text-danger" })
                     </div>
                 </div>
-                
-                <div class="form-group">
-                    <div class="col-md-offset-5 col-md-7">
-                        <input type="submit" value="Save Changes" class="btn btn-default" />
-                    </div>
-                </div>
+
+
             </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <input type="submit" value="Save Changes" class="btn btn-default pull-right" />
+            </div>
+
         </div>
     </div>
 
     <div id="viewFullVehicleDetails" data-url="@Url.Action("GetCurrentStateDetails", "Vehicles")"></div>
 
 }
+
+<div class="form-horizontal">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Current Images for Vehicle</h3>
+            
+           
+              
+            
+
+            
+            
+  @*  @if (vehicleImages != null)
+    {
+        foreach (var image in vehicleImages)
+        {
+            var base64Icon = Convert.ToBase64String(image.ImageBytes);
+            var iconImageSrc = string.Format("data:image/png;base64,{0}", base64Icon);
+            <div class="col-md-3">
+                <img src="@iconImageSrc" class="img-responsive img-thumbnail center-block" />
+            </div>
+            <button class="btn btn-danger">Delete</button>
+        }
+    }*@
+
+
+            <p data-bind="text: ErrorMessage"></p>
+            <!-- ko foreach: Images() -->
+                <div class="col-md-3 col-sm-6">
+                    <img style="z-index: 4" data-bind="attr: { src: Src }" class="img-responsive img-thumbnail center-block" />
+                    <button data-bind="click: Delete" class="btn btn-danger btn-xs pull-right" style="margin-bottom: 10px; z-index: 1; position: relative; bottom: 33px; right: 5px; opacity: .8">Delete</button>
+                </div>
+            <!-- /ko -->      
+            
+
+            <div id="loadVehicleImage" data-url="@Url.Action("LoadVehicleImages", "Vehicles")"></div>
+            <div id="deleteVehicleImages" data-url="@Url.Action("DeleteVehicleImage", "Vehicles")"></div>
+            </div>
+        </div>
+    <div class="row" >
+        <div class="col-md-12">
+            <button class="btn btn-default pull-right" data-bind="click: AddImage">Add New Image</button>
+        </div>
+    </div>
+</div>
 <br />
 <div class="bottomLink">
     
     <span class="glyphicon glyphicon-triangle-left"></span> @Html.ActionLink("Back", "Index", "Dealerships", null, null)
 </div>
 
+
+<script type="text/javascript">
+    function ImageViewModel(id, base64String) {
+        var self = this;
+        self.Id = id;
+        self.Base64String = base64String;
+
+       
+        self.Delete = function () {
+            if (confirm('Are you sure you want to delete this image?')) {
+                
+                 $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("DeleteVehicleImage")" + "/",
+                    data: { vehicleImageId: self.Id },
+                    success: function (data) {
+                        window.location.href = window.location.href;
+                        
+                    }
+
+
+                });
+            }
+
+        }
+
+
+        self.Src = "data:image/png;base64," + self.Base64String;
+    }
+
+    function VehicleImagesViewModel() {
+        var self = this;
+        self.Images = ko.observableArray([]);
+        self.ErrorMessage = ko.observable("");
+        $(document).ready(function () {
+            self.LoadVehicleImages();
+        });
+
+        
+
+        self.AddImage = function () {
+            window.location.href = "@Url.Action("AddImage", "Vehicles", new { id = Model.Id })";
+        }
+
+        self.LoadVehicleImages = function () {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("LoadVehicleImages", new { id = Model.Id })",
+                success: function (data) {
+
+
+                    for (var i = 0; i < data.length; i++) {
+                        //after retirieving initial results for page, add the items to the Vehicles Array to be rendered to the screen on load
+                        self.Images.push(new ImageViewModel(data[i].Id, data[i].Base64String));
+                    }
+
+                    if (data.length < 1) {
+                        self.ErrorMessage("You have not uploaded any images for this vehicle.")
+                    } else {
+                        self.ErrorMessage("");
+                    }
+                }
+            });
+        }
+    }
+    ko.applyBindings(VehicleImagesViewModel)
+</script>

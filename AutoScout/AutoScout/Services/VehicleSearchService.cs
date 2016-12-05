@@ -33,7 +33,7 @@ namespace AutoScout.Services
             
         }
 
-        public IEnumerable<Vehicle> GetNewestVehicles()
+        public IEnumerable<Vehicle> GetAllVehicles()
         {
             try
             {
@@ -62,6 +62,69 @@ namespace AutoScout.Services
                 return top3;
             }
             catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+        }
+
+        public string GetCompanyName(int dealershipId)
+        {
+            try
+            {
+                var dealership = db.Dealerships.Find(dealershipId);
+                if (dealership != null)
+                {
+                    var result = dealership.CompanyName;
+                    return result;
+
+                }
+                return "";
+            } catch(Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+           
+        }
+
+        public IEnumerable<VehicleImage> GetAllVehicleImages(int id)
+        {
+            try
+            {
+                var imagesForVehicle = db.VehicleImages.Where(x => x.VehicleId == id);
+                if (imagesForVehicle != null)
+                {
+                    var result = imagesForVehicle;
+                    return imagesForVehicle.ToList();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorService = new ErrorService(db);
+                errorService.logError(ex);
+
+                throw (ex);
+            }
+            
+        }
+
+        public VehicleImage GetVehicleImageFromVehicleImageId(int vehicleImageId)
+        {
+            try
+            {
+                var vehicleImage = db.VehicleImages.Find(vehicleImageId);
+                return vehicleImage;
+            }
+            catch(Exception ex)
             {
                 var errorService = new ErrorService(db);
                 errorService.logError(ex);
@@ -134,6 +197,7 @@ namespace AutoScout.Services
             }
         }
 
+
         //query database to obtain vehicles that match search results
         public ICollection<Vehicle> SearchInventory(string make = "", string model = "", int year = -1, int minPrice = -1, int maxPrice = -1, int minMileage = -1, int maxMileage = -1, string transmission = "", string style = "", string condition = "", int cylinderNumber = -1, string exteriorColor = "")
         {
@@ -176,6 +240,8 @@ namespace AutoScout.Services
                 throw (ex);
             }
         }
+
+        
 
         public Dealership GetDealershipData(int dealershipId)
         {

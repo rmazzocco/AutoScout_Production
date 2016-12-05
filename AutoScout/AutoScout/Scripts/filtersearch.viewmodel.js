@@ -258,7 +258,7 @@ function FilterSearchViewModel() {
         //send all custom search criteria to server to render desired vehicle selections
         $.ajax({
             type: "GET",
-            url: /*"@Url.Action("GetSearchCriteriaResults")",*/ "Vehicles/GetSearchResults/",
+            url: "Vehicles/GetSearchResults/",
             data: {
             make: self.MakeChecked,
             model: self.ModelChecked,
