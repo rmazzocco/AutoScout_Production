@@ -53,12 +53,16 @@ namespace AutoScout.Services
         {
             try
             {
-                var results = db.Vehicles.Where(x => x.Id > 0).OrderBy(x => x.DateCreated).ToArray();
+                var results = db.Vehicles.Where(x => x.Id > 0).ToList();
+                results.OrderBy(x => x.DateCreated);
+                results.Reverse();
+                
                 var top3 = new List<Vehicle>();
                 for(var i = 0; i < 3; ++i)
                 {
                     top3.Add(results[i]);
                 }
+                
                 return top3;
             }
             catch (Exception ex)
