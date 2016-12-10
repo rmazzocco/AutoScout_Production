@@ -1,6 +1,10 @@
 ﻿@model AutoScout.Models.Vehicle
 @using AutoScout.Models
 
+@*By: Evan Bauer & Ryan Mazzocco
+     December 2016
+    Vehicles/ShortcutListItem.cshtml*@
+
 @{
     var db = new AutoScoutDBContext();
     var dealershipName = db.Dealerships.FirstOrDefault(x => x.Id == Model.DealershipId).CompanyName;

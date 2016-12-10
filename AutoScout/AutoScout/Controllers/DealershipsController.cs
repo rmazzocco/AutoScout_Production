@@ -13,6 +13,9 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using AutoScout.Services;
 using Newtonsoft.Json;
 
+//By: Evan Bauer & Ryan Mazzocco
+//December 2016
+//VehiclesController.cs
 namespace AutoScout.Controllers
 {
     public class DealershipsController : Controller
